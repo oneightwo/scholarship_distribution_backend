@@ -1,2 +1,2 @@
 insert into roles (name)
-values ('ADMIN');
+values ('ROLE_ADMIN');

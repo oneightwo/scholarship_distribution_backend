@@ -11,6 +11,7 @@ public class Tools {
         }
         return val;
     }
+
     public static Double sumDouble(Collection<Double> list) {
         Double val = 0.0;
         for (Double v : list) {

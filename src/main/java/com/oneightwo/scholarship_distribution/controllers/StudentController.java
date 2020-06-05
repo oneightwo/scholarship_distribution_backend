@@ -1,19 +1,18 @@
-package com.oneightwo.scholarship_distribution.controller;
+package com.oneightwo.scholarship_distribution.controllers;
 
-import com.oneightwo.scholarship_distribution.constants.Semester;
+import com.oneightwo.scholarship_distribution.core.exceptions.CoreException;
 import com.oneightwo.scholarship_distribution.model.Student;
+import com.oneightwo.scholarship_distribution.security.repository.UserRepository;
 import com.oneightwo.scholarship_distribution.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.math.BigInteger;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("api/v1/students/")
@@ -37,22 +36,35 @@ public class StudentController {
     @Autowired
     private SettingService settingService;
 
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    private UserRepository userRepository;
+
     private Logger log = LoggerFactory.getLogger(StudentController.class);
 
-    @PostMapping("registration")
-    public ResponseEntity<?> setStudent( @RequestPart("student") Student student, @RequestPart("file") MultipartFile file) {
-        log.info("student = {}", student != null ? student : "null");
-        log.info("file = {}", file != null ? file.getOriginalFilename() : "null");
+    @GetMapping("settings")
+    public ResponseEntity<?> getSettings() {
+        return ResponseEntity.ok(settingService.getAll());
+    }
 
-        if (settingService.isActiveRegistration() && file != null && !file.isEmpty()) {
-            Student saveStudent = studentService.save(student);
-            BigInteger id = saveStudent.getId();
-            boolean isSaveFile = fileService.upload(file, String.valueOf(id));
-            return isSaveFile ? ResponseEntity.ok().body(studentService.save(saveStudent)) : ResponseEntity.badRequest().build();
+    @PostMapping("registration")
+    public ResponseEntity<?> setStudent(@Valid @RequestBody Student student) {
+        log.info("student = {}", student != null ? student : "null");
+
+        if (settingService.isActiveRegistration()) {
+            return ResponseEntity.ok(studentService.save(student));
         } else {
             return ResponseEntity.badRequest().build();
         }
     }
+
+//    @PostMapping("registr")
+//    private ResponseEntity<?> setAdmin(@Valid @RequestBody User user) {
+//        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+//        return ResponseEntity.ok().body(userRepository.save(user));
+//    }
 
     @GetMapping("fields/universities")
     private ResponseEntity<?> getScienceDirection() {
@@ -66,16 +78,13 @@ public class StudentController {
 
     @GetMapping("fields/courses")
     private ResponseEntity<?> getCourses() {
-        return ResponseEntity.ok().body(courseService.getAll());
+        return ResponseEntity.ok().body(courseService.findByNumber());
     }
 
-//    @PostMapping("/files/upload")
-//    public ResponseEntity<?> uploadData(@RequestParam("file") MultipartFile file) {
-//        if (fileService.upload(file, "EMPTY_NAME")) {
-//            return ResponseEntity.ok().build();
-//        } else {
-//            return ResponseEntity.notFound().build(); //CHANGE HANDLER ERRORS
-//        }
-//    }
+    @PostMapping("files/upload")
+    public ResponseEntity<?> uploadData(@RequestParam("file") MultipartFile file) throws CoreException {
+        fileService.upload(file);
+        return ResponseEntity.ok().build();
+    }
 
 }

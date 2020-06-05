@@ -8,6 +8,7 @@ import com.oneightwo.scholarship_distribution.service.impl.StudentServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -18,25 +19,21 @@ import static com.oneightwo.scholarship_distribution.tools.Tools.sumDouble;
 import static com.oneightwo.scholarship_distribution.tools.Tools.sumLong;
 
 @Component
-public class DistributionServiceImpl implements DistributionService {
+public class DistributionServiceImpl extends DistributionService {
 
     @Autowired
     private StudentServiceImpl studentService;
-
     @Autowired
     private ScienceDirectionServiceImpl scienceDirectionService;
 
-    private Logger log = LoggerFactory.getLogger(DistributionServiceImpl.class);
+    private final Logger log = LoggerFactory.getLogger(DistributionServiceImpl.class);
 
-    @Override
-    public int getRating(int[] criteria) {
-        double rating = 0.0;
-        for (int i = 0; i < criteria.length; i++) {
-            rating += KEF[VK[i]] * UR[criteria[i]];
-        }
-        return (int) Math.round(rating);
-    }
 
+    /**
+     * расчет среднего рейтинга из списка студентов (по направлению)
+     * @param students список студентов (одного навпрления)
+     * @return рейтинг
+     */
     private double getAverageRating(List<Student> students) {
         double rating = 0;
         for (Student student : students) {
@@ -45,6 +42,11 @@ public class DistributionServiceImpl implements DistributionService {
         return rating / students.size();
     }
 
+    /**
+     * граница минимального рейтинга (по навпрлению)
+     * @param students список студентов (одного направления)
+     * @return рейтинг
+     */
     private double getMinimalRating(List<Student> students) {
         double rating = 0;
         for (Student student : students) {
@@ -53,34 +55,44 @@ public class DistributionServiceImpl implements DistributionService {
         return rating / students.size() * MINIMUM_PERCENTAGE_BORDER;
     }
 
-    private Map<String, List<Student>> divisionOfDirection(List<Student> studentList) {
+    /**
+     * распределение студентов по направлениям
+     * @param students список студентов
+     * @return Map<Направление, Список студентов>
+     */
+    private Map<String, List<Student>> divisionOfDirection(List<Student> students) {
         Map<String, List<Student>> divisionList = new HashMap<>() {{
             scienceDirectionService.getAll().forEach(scienceDirection ->
                     put(scienceDirection.getName(), new ArrayList<>())
             );
         }};
         log.info(divisionList.toString());
-        for (Student student : studentList) {
+        for (Student student : students) {
             String nameDirection = student.getScienceDirection().getName();
             divisionList.get(nameDirection).add(student);
         }
         return divisionList;
     }
 
-    private Map<String, Map<String, List<Student>>> selectionByMinimalRatingAndDirection(Map<String, List<Student>> divisionOfDirectionList) {
+    /**
+     * разделение студентов на: рейтинг >= минимальному (PASSED) или рейтинг < минимального(NOT_PASSED)
+     * @param directionsStudentsMap Map<Направление, Список студентов>
+     * @return Map<Тип (прошли, не прошли), Map<Направление, Список студентов>>
+     */
+    private Map<String, Map<String, List<Student>>> selectionByMinimalRatingAndDirection(Map<String, List<Student>> directionsStudentsMap) {
         Map<String, Map<String, List<Student>>> selectionList = new HashMap<>() {{
             put(PASSED, new HashMap<>() {{
-                for (String key : divisionOfDirectionList.keySet()) {
+                for (String key : directionsStudentsMap.keySet()) {
                     put(key, new ArrayList<>());
                 }
             }});
             put(NOT_PASSED, new HashMap<>() {{
-                for (String key : divisionOfDirectionList.keySet()) {
+                for (String key : directionsStudentsMap.keySet()) {
                     put(key, new ArrayList<>());
                 }
             }});
         }};
-        for (Map.Entry<String, List<Student>> entry : divisionOfDirectionList.entrySet()) {
+        for (Map.Entry<String, List<Student>> entry : directionsStudentsMap.entrySet()) {
             log.info(entry.getKey() + " -> " + String.valueOf(getMinimalRating(entry.getValue())));
             for (Student student : entry.getValue()) {
                 double minRating = getMinimalRating(entry.getValue());
@@ -95,30 +107,41 @@ public class DistributionServiceImpl implements DistributionService {
         return selectionList;
     }
 
-    private Map<String, Double> calculationRating(Map<String, List<Student>> passedList) {
+    /**
+     * перерасчет среднего рейтинга направлениий по прошедшим студентам
+     * @param directionsStudentsMap Map<Направление, Список студентов> прошедших студентов
+     * @return Map<Направление, Средний рейтинг>
+     */
+    private Map<String, Double> calculationRatingForDirections(Map<String, List<Student>> directionsStudentsMap) {
         Map<String, Double> ratingMap = new HashMap<>();
-        for (Map.Entry<String, List<Student>> entry : passedList.entrySet()) {
+        for (Map.Entry<String, List<Student>> entry : directionsStudentsMap.entrySet()) {
             double counter = 0;
-            List<Student> students = entry.getValue();
-            for (Student student : students) {
+            List<Student> studentsValues = entry.getValue();
+            for (Student student : studentsValues) {
                 counter += student.getRating();
             }
-            ratingMap.put(entry.getKey(), counter / students.size());
+            ratingMap.put(entry.getKey(), counter / studentsValues.size());
         }
         return ratingMap;
     }
 
-    private Map<String, Long> distributionScholarshipByAny(Map<String, List<Student>> passedStudent, Long count) {
+    /**
+     * универсальный метод распределения количества стипендий по направлениям/университетам
+     * @param anyStudentsMap Map<Any (направления/университеты), Список студентов>
+     * @param quantity количество стипендий для распреления
+     * @return Map<Any (направления/университеты), Количество стипендий>
+     */
+    private Map<String, Long> distributionScholarshipByAny(Map<String, List<Student>> anyStudentsMap, Long quantity) {
         Map<String, Long> scholarshipByCandidates = new HashMap<>() {{
-            passedStudent.forEach((key, value) -> put(key, -1L));
+            anyStudentsMap.forEach((key, value) -> put(key, -1L));
         }};
         Map<String, Long> result = new HashMap<>() {{
-            passedStudent.forEach((key, value) -> put(key, 0L));
+            anyStudentsMap.forEach((key, value) -> put(key, 0L));
         }};
         Map<String, Double> relationshipRatingByCandidates = new HashMap<>();
-        Map<String, Double> ratingByDirection = calculationRating(passedStudent);
+        Map<String, Double> ratingByDirection = calculationRatingForDirections(anyStudentsMap);
         Double sumRating = sumDouble(ratingByDirection.values());
-        Long free = count;
+        Long free = quantity;
 
         while (free != 0) {
             Double finalSumRating = sumRating;
@@ -130,7 +153,7 @@ public class DistributionServiceImpl implements DistributionService {
                 if (free > 0) {
                     log.info("result => {}", result);
                     scholarshipByCandidates = result.entrySet().stream()
-                            .filter(e -> passedStudent.get(e.getKey()).size() > result.get(e.getKey()))
+                            .filter(e -> anyStudentsMap.get(e.getKey()).size() > result.get(e.getKey()))
                             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
                     log.info("scholarshipByCandidates => {}", scholarshipByCandidates);
                     Double maxRating = 0.0;
@@ -148,7 +171,7 @@ public class DistributionServiceImpl implements DistributionService {
                             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
                     Map<String, Long> finalScholarshipByCandidates = scholarshipByCandidates;
-                    ratingByDirection = calculationRating(passedStudent.entrySet().stream()
+                    ratingByDirection = calculationRatingForDirections(anyStudentsMap.entrySet().stream()
                             .filter(e -> finalScholarshipByCandidates.containsKey(e.getKey()))
                             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
 
@@ -167,7 +190,7 @@ public class DistributionServiceImpl implements DistributionService {
                 }
                 result.put(finalKey, scholarshipByCandidates.get(finalKey));
 
-            } else { //------------------------------------
+            } else {
                 for (Map.Entry<String, Double> e : relationshipRatingByCandidates.entrySet()) {
                     String s = e.getKey();
                     Double v = e.getValue();
@@ -176,7 +199,7 @@ public class DistributionServiceImpl implements DistributionService {
                     }
                 }
                 for (String k : scholarshipByCandidates.keySet()) {
-                    while (scholarshipByCandidates.get(k) > passedStudent.get(k).size() - result.get(k)) {
+                    while (scholarshipByCandidates.get(k) > anyStudentsMap.get(k).size() - result.get(k)) {
                         scholarshipByCandidates.put(k, scholarshipByCandidates.get(k) - 1);
                     }
                 }
@@ -191,32 +214,36 @@ public class DistributionServiceImpl implements DistributionService {
                 }
             }
             scholarshipByCandidates = scholarshipByCandidates.entrySet().stream()
-                    .filter(e -> result.get(e.getKey()) != passedStudent.get(e.getKey()).size())
+                    .filter(e -> result.get(e.getKey()) != anyStudentsMap.get(e.getKey()).size())
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
             Map<String, Long> finalScholarshipByCandidates1 = scholarshipByCandidates;
-            ratingByDirection = calculationRating(passedStudent.entrySet().stream()
+            ratingByDirection = calculationRatingForDirections(anyStudentsMap.entrySet().stream()
                     .filter(e -> finalScholarshipByCandidates1.containsKey(e.getKey()))
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
             sumRating = sumDouble(ratingByDirection.values());
             relationshipRatingByCandidates.clear();
-            free = count - sumLong(result.values());
+            free = quantity - sumLong(result.values());
             log.info("result -> {}", result);
             log.info("resultSum -> {}", sumLong(result.values()));
-            log.info("count -> {}", count);
+            log.info("count -> {}", quantity);
             log.info("free -> {}", free);
         }
         return result;
     }
 
-    private Map<String, Map<String, List<Student>>> divisionUniversitiesByDirection(Map<String, List<Student>> passedStudent) {
+    /**
+     * разделение студентов университетов по направлениям
+     * @param directionsStudentsMap Map<Направление, Список студентов>
+     * @return Map<Направление, Map<Университет, Список студентов>>
+     */
+    private Map<String, Map<String, List<Student>>> divisionUniversitiesByDirection(Map<String, List<Student>> directionsStudentsMap) {
         Map<String, Map<String, List<Student>>> map = new HashMap<>() {{
             scienceDirectionService.getAll().forEach(scienceDirection ->
                     put(scienceDirection.getName(), new HashMap<>())
             );
         }};
-        log.info("======divisionUniversitiesByDirection======");
         for (String d : map.keySet()) {
-            for (Student student : passedStudent.get(d)) {
+            for (Student student : directionsStudentsMap.get(d)) {
                 String u = student.getUniversity().getAbbreviation();
                 Map<String, List<Student>> listMap = map.get(d);
                 if (listMap.containsKey(u)) {
@@ -238,15 +265,20 @@ public class DistributionServiceImpl implements DistributionService {
         return map;
     }
 
-    private Map<String, Map<String, Long>> distributionScholarshipByUniversities(Map<String, Map<String, List<Student>>> divisionUniversitiesByDirection,
-                                                                                 Map<String, Long> distributionScholarshipByDirection) {
+    /**
+     * распределение стипендий по университетам внутри направлений
+     * @param directionsMapUniversitiesStudentsMap Map<Направление, Map<Университет, Список студентов>>
+     * @param directionsQuantityMap Map<Направление, Количество стипендий>
+     * @return Map<Направление, Map<Университет, Количество стипендий>>
+     */
+    private Map<String, Map<String, Long>> distributionOfScholarshipsByUniversityWithinDirections(Map<String, Map<String, List<Student>>> directionsMapUniversitiesStudentsMap,
+                                                                                                  Map<String, Long> directionsQuantityMap) {
         Map<String, Map<String, Long>> distributionScholarshipByUniversities = new HashMap<>();
 
-        log.info("!!! {}", distributionScholarshipByDirection);
-        for (Map.Entry<String, Long> entry : distributionScholarshipByDirection.entrySet()) {
+        for (Map.Entry<String, Long> entry : directionsQuantityMap.entrySet()) {
             String k = entry.getKey();
             Long v = entry.getValue();
-            distributionScholarshipByUniversities.put(k, distributionScholarshipByAny(divisionUniversitiesByDirection.get(k), v));
+            distributionScholarshipByUniversities.put(k, distributionScholarshipByAny(directionsMapUniversitiesStudentsMap.get(k), v));
         }
 
         for (Map.Entry<String, Map<String, Long>> entry : distributionScholarshipByUniversities.entrySet()) {
@@ -260,9 +292,14 @@ public class DistributionServiceImpl implements DistributionService {
         return distributionScholarshipByUniversities;
     }
 
-    private Map<String, Map<String, List<Student>>> sortedByDirectionsAndUniversities(Map<String, Map<String, List<Student>>> listByDirectionsAndUniversities) {
+    /**
+     * сортировка студентов внутри направления в университетах по рейтингу
+     * @param directionsMapUniversitiesStudentsMap Map<Направление, Map<Университет, Список студентов>>
+     * @return Map<Направление, Map<Университет, Список студентов>>
+     */
+    private Map<String, Map<String, List<Student>>> sortedByRatingsWithinUniversities(Map<String, Map<String, List<Student>>> directionsMapUniversitiesStudentsMap) {
         Map<String, Map<String, List<Student>>> sortedByDirectionsAndUniversities = new HashMap<>();
-        for (Map.Entry<String, Map<String, List<Student>>> entry : listByDirectionsAndUniversities.entrySet()) {
+        for (Map.Entry<String, Map<String, List<Student>>> entry : directionsMapUniversitiesStudentsMap.entrySet()) {
             List<Student> list = new ArrayList<>();
             Map<String, List<Student>> map = new HashMap<>();
             sortedByDirectionsAndUniversities.put(entry.getKey(), entry.getValue());
@@ -277,19 +314,25 @@ public class DistributionServiceImpl implements DistributionService {
         return sortedByDirectionsAndUniversities;
     }
 
-    private Map<String, List<Student>> getWinnerListSortedByUniversities(Map<String, Map<String, Long>> countPlace,
-                                                                         Map<String, Map<String, List<Student>>> sortedMap) {
+    /**
+     * получение студетнов победителей по университетам
+     * @param quantityPlaces Map<Направление, Map<Университет, Количество стипендий>>
+     * @param directionsMapUniversitiesStudentsMap Map<Направление, Map<Университет, Список студентов>>
+     * @return Map<Университет, Список студентов>
+     */
+    private Map<String, List<Student>> getWinnersStudents(Map<String, Map<String, Long>> quantityPlaces,
+                                                          Map<String, Map<String, List<Student>>> directionsMapUniversitiesStudentsMap) {
         Map<String, List<Student>> winnersList = new HashMap<>();
-        for (Map.Entry<String, Map<String, List<Student>>> entry : sortedMap.entrySet()) {
+        for (Map.Entry<String, Map<String, List<Student>>> entry : directionsMapUniversitiesStudentsMap.entrySet()) {
             for (Map.Entry<String, List<Student>> entry1 : entry.getValue().entrySet()) {
                 if (winnersList.containsKey(entry1.getKey())) {
                     List<Student> list = winnersList.get(entry1.getKey());
-                    list.addAll(entry1.getValue().subList(0, countPlace.get(entry.getKey()).get(entry1.getKey()).intValue()));
+                    list.addAll(entry1.getValue().subList(0, quantityPlaces.get(entry.getKey()).get(entry1.getKey()).intValue()));
                     winnersList.put(entry1.getKey(), list);
                 } else {
-                    winnersList.put(entry1.getKey(), entry1.getValue().subList(0, countPlace.get(entry.getKey()).get(entry1.getKey()).intValue()));
+                    winnersList.put(entry1.getKey(), entry1.getValue().subList(0, quantityPlaces.get(entry.getKey()).get(entry1.getKey()).intValue()));
                 }
-                log.info("направление=({}) вуз=({}) мест=({}) поместится=({})", entry.getKey(), entry1.getKey(), countPlace.get(entry.getKey()).get(entry1.getKey()), winnersList.get(entry1.getKey()).size() + entry1.getValue().subList(0, countPlace.get(entry.getKey()).get(entry1.getKey()).intValue()).size());
+                log.info("направление=({}) вуз=({}) мест=({}) поместится=({})", entry.getKey(), entry1.getKey(), quantityPlaces.get(entry.getKey()).get(entry1.getKey()), winnersList.get(entry1.getKey()).size() + entry1.getValue().subList(0, quantityPlaces.get(entry.getKey()).get(entry1.getKey()).intValue()).size());
             }
         }
         int sum = 0;
@@ -303,48 +346,22 @@ public class DistributionServiceImpl implements DistributionService {
         return winnersList;
     }
 
-    private Map<String, Map<String, String>> distributionScholarshipsByStudent(Map<String, List<Student>> winnerMap) {
-        Map<String, Map<String, String>> resultList = new HashMap<>();
-        for (Map.Entry<String, List<Student>> entry : winnerMap.entrySet()) {
-            for (Student student : entry.getValue()) {
-                String sd = student.getScienceDirection().getName();
-                String u = student.getUniversity().getAbbreviation();
-                int sum = 0;
-                if (resultList.containsKey(sd)) {
-                    if (resultList.get(sd).containsKey(u)) {
-                        sum = Integer.parseInt(resultList.get(sd).get(u));
-                        sum += 1;
-                        resultList.get(sd).put(u, String.valueOf(sum));
-                    } else {
-                        sum = 1;
-                        resultList.get(sd).put(u, String.valueOf(sum));
-                    }
-                } else {
-                    resultList.put(sd, new HashMap<>());
-                }
-            }
-        }
-
-        return resultList;
-    }
-
     @Override
     public Map<String, List<Student>> getWinnerStudents(Semester semester, int year) {
-        List<Student> studentList = studentService.getStudentByMonthsAndYear(semester.getMonths(), year);
+        List<Student> studentList = studentService.getStudentBySemesterAndYear(semester, year);
         Map<String, List<Student>> divisionOfDirectionMap = divisionOfDirection(studentList);
         Map<String, Map<String, List<Student>>> selectionByMinimalRatingAndDirectionMap = selectionByMinimalRatingAndDirection(divisionOfDirectionMap);
 //        Map<String, Double> calculationRatingByDirectionMap = calculationRating(selectionByMinimalRatingAndDirectionMap.get(PASSED));
         Map<String, Long> distributionScholarshipByDirection = distributionScholarshipByAny(selectionByMinimalRatingAndDirectionMap.get(PASSED), NUMBER_SCHOLARSHIPS);
         log.info("distributionScholarshipByDirection---->{}", distributionScholarshipByDirection);
         Map<String, Map<String, List<Student>>> divisionUniversitiesByDirection = divisionUniversitiesByDirection(selectionByMinimalRatingAndDirectionMap.get(PASSED));
-        Map<String, Map<String, Long>> distributionScholarshipByUniversities = distributionScholarshipByUniversities(divisionUniversitiesByDirection, distributionScholarshipByDirection);
-        Map<String, List<Student>> winnerMap = getWinnerListSortedByUniversities(distributionScholarshipByUniversities, sortedByDirectionsAndUniversities(divisionUniversitiesByDirection));
-        return winnerMap;
+        Map<String, Map<String, Long>> distributionScholarshipByUniversities = distributionOfScholarshipsByUniversityWithinDirections(divisionUniversitiesByDirection, distributionScholarshipByDirection);
+        return getWinnersStudents(distributionScholarshipByUniversities, sortedByRatingsWithinUniversities(divisionUniversitiesByDirection));
     }
 
     @Override
     public Map<String, List<Student>> getLoserStudents(Semester semester, int year) {
-        List<Student> studentList = studentService.getStudentByMonthsAndYear(semester.getMonths(), year);
+        List<Student> studentList = studentService.getStudentBySemesterAndYear(semester, year);
         Map<String, List<Student>> divisionOfDirectionMap = divisionOfDirection(studentList);
         Map<String, Map<String, List<Student>>> selectionByMinimalRatingAndDirectionMap = selectionByMinimalRatingAndDirection(divisionOfDirectionMap);
         return selectionByMinimalRatingAndDirectionMap.get(NOT_PASSED);
@@ -352,21 +369,21 @@ public class DistributionServiceImpl implements DistributionService {
 
     @Override
     public Map<String, Map<String, Long>> getCountScholarshipsByDirectionAndUniversities(Semester semester, int year) {
-        List<Student> studentList = studentService.getStudentByMonthsAndYear(semester.getMonths(), year);
+        List<Student> studentList = studentService.getStudentBySemesterAndYear(semester, year);
         Map<String, List<Student>> divisionOfDirectionMap = divisionOfDirection(studentList);
         Map<String, Map<String, List<Student>>> selectionByMinimalRatingAndDirectionMap = selectionByMinimalRatingAndDirection(divisionOfDirectionMap);
 //        Map<String, Double> calculationRatingByDirectionMap = calculationRating(selectionByMinimalRatingAndDirectionMap.get(PASSED));
         Map<String, Long> distributionScholarshipByDirection = distributionScholarshipByAny(selectionByMinimalRatingAndDirectionMap.get(PASSED), NUMBER_SCHOLARSHIPS);
         log.info("distributionScholarshipByDirection---->{}", distributionScholarshipByDirection);
         Map<String, Map<String, List<Student>>> divisionUniversitiesByDirection = divisionUniversitiesByDirection(selectionByMinimalRatingAndDirectionMap.get(PASSED));
-        Map<String, Map<String, Long>> distributionScholarshipByUniversities = distributionScholarshipByUniversities(divisionUniversitiesByDirection, distributionScholarshipByDirection);
+        Map<String, Map<String, Long>> distributionScholarshipByUniversities = distributionOfScholarshipsByUniversityWithinDirections(divisionUniversitiesByDirection, distributionScholarshipByDirection);
         return distributionScholarshipByUniversities;
     }
 
     @Override
     public List<Map<String, String>> getReportByDirection(Semester semester, int year) {
         List<Map<String, String>> reportList = new ArrayList<>();
-        List<Student> studentList = studentService.getStudentByMonthsAndYear(semester.getMonths(), year);
+        List<Student> studentList = studentService.getStudentBySemesterAndYear(semester, year);
         Map<String, List<Student>> divisionOfDirectionMap = divisionOfDirection(studentList);
         Map<String, Map<String, List<Student>>> selectionByMinimalRatingAndDirectionMap = selectionByMinimalRatingAndDirection(divisionOfDirectionMap);
         Map<String, Long> distributionScholarshipByDirection = distributionScholarshipByAny(selectionByMinimalRatingAndDirectionMap.get(PASSED), NUMBER_SCHOLARSHIPS);
@@ -429,15 +446,15 @@ public class DistributionServiceImpl implements DistributionService {
     @Override
     public Map<String, List<Map<String, String>>> getReportByDirectionAndUniversities(Semester semester, int year) {
         Map<String, List<Map<String, String>>> reportList = new HashMap<>();
-        List<Student> studentList = studentService.getStudentByMonthsAndYear(semester.getMonths(), year);
+        List<Student> studentList = studentService.getStudentBySemesterAndYear(semester, year);
         Map<String, List<Student>> divisionOfDirectionMap = divisionOfDirection(studentList);
         Map<String, Map<String, List<Student>>> selectionByMinimalRatingAndDirectionMap = selectionByMinimalRatingAndDirection(divisionOfDirectionMap);
 //        Map<String, Double> calculationRatingByDirectionMap = calculationRating(selectionByMinimalRatingAndDirectionMap.get(PASSED));
         Map<String, Long> distributionScholarshipByDirection = distributionScholarshipByAny(selectionByMinimalRatingAndDirectionMap.get(PASSED), NUMBER_SCHOLARSHIPS);
         log.info("distributionScholarshipByDirection---->{}", distributionScholarshipByDirection);
         Map<String, Map<String, List<Student>>> divisionUniversitiesByDirectionMap = divisionUniversitiesByDirection(selectionByMinimalRatingAndDirectionMap.get(PASSED));
-        Map<String, Map<String, Long>> distributionScholarshipByUniversities = distributionScholarshipByUniversities(divisionUniversitiesByDirectionMap, distributionScholarshipByDirection);
-        Map<String, List<Student>> winnerList = getWinnerListSortedByUniversities(distributionScholarshipByUniversities, sortedByDirectionsAndUniversities(divisionUniversitiesByDirectionMap));
+        Map<String, Map<String, Long>> distributionScholarshipByUniversities = distributionOfScholarshipsByUniversityWithinDirections(divisionUniversitiesByDirectionMap, distributionScholarshipByDirection);
+        Map<String, List<Student>> winnerList = getWinnersStudents(distributionScholarshipByUniversities, sortedByRatingsWithinUniversities(divisionUniversitiesByDirectionMap));
 //        return distributionScholarshipsByStudent(winnerList);
         Map<String, String> map = new HashMap<>();
         List<Map<String, String>> list = new ArrayList<>();
@@ -457,7 +474,7 @@ public class DistributionServiceImpl implements DistributionService {
             map.clear();
         }
         //Кол-во заявок допущенных до конкурса
-        for (Map.Entry<String, Map<String, List<Student>>> entry : sortedByDirectionsAndUniversities(divisionUniversitiesByDirectionMap).entrySet()) {
+        for (Map.Entry<String, Map<String, List<Student>>> entry : sortedByRatingsWithinUniversities(divisionUniversitiesByDirectionMap).entrySet()) {
             for (Map.Entry<String, List<Student>> entry1 : entry.getValue().entrySet()) {
                 map.put(entry1.getKey(), String.valueOf(entry1.getValue().size()));
             }

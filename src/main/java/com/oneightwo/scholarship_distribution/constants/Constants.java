@@ -10,6 +10,8 @@ public interface Constants {
     String PASSED = "PASSED";
     String NOT_PASSED = "NOT_PASSED";
     Long NUMBER_SCHOLARSHIPS = 108L;
+    String UPLOAD = "/upload";
+    String PDF_EXTENSION = ".pdf";
 
     //-----Setting-----
     BigInteger ACTIVE_REGISTRATION_ID = BigInteger.valueOf(1L);

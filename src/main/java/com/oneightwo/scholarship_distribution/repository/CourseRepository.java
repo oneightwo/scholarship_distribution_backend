@@ -10,6 +10,6 @@ import java.util.Collection;
 import java.util.List;
 
 public interface CourseRepository extends JpaRepository<Course, BigInteger> {
-    @Query(value = "SELECT c FROM courses c WHERE c.name IN :names",  nativeQuery = true)
-    List<Course> findByNumber(@Param("names") Collection<Integer> names);
+    @Query(value = "SELECT * FROM courses c WHERE c.name IN (:names)",  nativeQuery = true)
+    List<Course> findByNumbers(@Param("names") Collection<Integer> names);
 }

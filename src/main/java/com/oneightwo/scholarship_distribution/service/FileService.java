@@ -1,14 +1,35 @@
 package com.oneightwo.scholarship_distribution.service;
 
 import com.oneightwo.scholarship_distribution.constants.Semester;
-import org.springframework.core.io.ByteArrayResource;
+import com.oneightwo.scholarship_distribution.core.exceptions.CoreException;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.math.BigInteger;
+import java.io.ByteArrayOutputStream;
 
 public interface FileService {
 
-    boolean upload(MultipartFile file, String name);
+    /**
+     * загрузка файла
+     * @param file файл
+     * @param name новое имя файла
+     * @throws CoreException
+     */
+    void upload(MultipartFile file, String name) throws CoreException;
 
-    ByteArrayResource download(int year, Semester semester, BigInteger id);
+    /**
+     * загрузка файла
+     * @param file файл
+     * @throws CoreException
+     */
+    void upload(MultipartFile file) throws CoreException;
+
+    /**
+     * выгрузка файла
+     * @param year год
+     * @param semester семестр
+     * @param name название файла
+     * @return найденный файл
+     * @throws CoreException
+     */
+    ByteArrayOutputStream download(String year, Semester semester, String name) throws CoreException;
 }

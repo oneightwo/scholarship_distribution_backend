@@ -1,17 +1,17 @@
 package com.oneightwo.scholarship_distribution.service.impl;
 
+import com.oneightwo.scholarship_distribution.constants.Constants;
 import com.oneightwo.scholarship_distribution.constants.Semester;
+import com.oneightwo.scholarship_distribution.core.exceptions.CoreException;
+import com.oneightwo.scholarship_distribution.core.exceptions.FileNotFoundException;
+import com.oneightwo.scholarship_distribution.core.exceptions.InvalidFileFormatException;
 import com.oneightwo.scholarship_distribution.service.FileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.math.BigInteger;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,72 +20,113 @@ import java.time.LocalDate;
 @Service
 public class FileServiceImpl implements FileService {
 
-    private Logger log = LoggerFactory.getLogger(FileServiceImpl.class);
+    private final Logger log = LoggerFactory.getLogger(FileServiceImpl.class);
 
+    /**
+     * получение названия папки семестра
+     * @return название папки равна текущему семестру (AUTUMN или SPRING)
+     */
     private String getNameFolderSemester() {
         LocalDate date = LocalDate.now();
         if (Semester.AUTUMN.getMonths().contains(date.getMonthValue())) {
-            return Semester.AUTUMN.getName();
+            return "/" + Semester.AUTUMN;
         } else {
-            return Semester.SPRING.getName();
+            return "/" + Semester.SPRING;
         }
     }
 
-    private String getDir() {
-        return new File("").getAbsolutePath();
-    }
-
+    /**
+     * получение навзвание папки года
+     * @return навзание папки равная текущему году
+     */
     private String getNameFolderYear() {
-        return String.valueOf(LocalDate.now().getYear());
+        return "/" + LocalDate.now().getYear();
     }
 
-    @Override
-    public boolean upload(MultipartFile file, String name) {
-        if (!file.isEmpty()) {
-            String path = getDir() + "/" + "upload";
-            if (!new File(path).exists()) {
-                new File(path).mkdir();
-            }
-            path += "/" + getNameFolderYear();
-            if (!new File(path).exists()) {
-                new File(path).mkdir();
-            }
-            path += "/" + getNameFolderSemester();
-            if (!new File(path).exists()) {
-                new File(path).mkdir();
-            }
-            try {
-                String fileName = file.getOriginalFilename();
-                log.info(file.getOriginalFilename());
-                byte[] bytes = file.getBytes();
-                BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(path + "/" + name + ".jpg")));
-                stream.write(bytes);
-                stream.close();
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
+    /**
+     * получение абсолютного пути + /upload
+     * @return абсолютный путь /upload
+     */
+    private String getDir() {
+        return new File("").getAbsolutePath() + Constants.UPLOAD;
+    }
+
+    /**
+     * получение расширения файла
+     * @param file файл для проверки
+     * @return расширение (.extension)
+     * @throws CoreException неверное расширение файла
+     */
+    private String getFileExtension(MultipartFile file) throws CoreException {
+        String name = file.getOriginalFilename();
+        int lastIndexOf = name.lastIndexOf(".");
+        if (lastIndexOf == -1) {
+            throw new InvalidFileFormatException();
         }
-        return false;
+        return name.substring(lastIndexOf);
+    }
+
+    /**
+     * получение текущего пути (текущий семестр, текущий год) для сохранения файла
+     * @return текущий путь (абсолютный путь/upload/год/семестр)
+     */
+    private Path getCurrentPath() {
+        StringBuilder pathStr = new StringBuilder(getDir());
+        pathStr.append(getNameFolderYear());
+        pathStr.append(getNameFolderSemester());
+        if (Files.exists(Paths.get(pathStr.toString()))) {
+            return Paths.get(pathStr.toString());
+        } else {
+            File file = new File(pathStr.toString());
+            file.mkdirs();
+            return file.toPath();
+        }
+    }
+
+    /**
+     * проверка файла
+     * @param file файл
+     * @throws CoreException файл не найден или неверное расширение файла
+     */
+    private void checkingFile(MultipartFile file) throws CoreException {
+        if (file.isEmpty()) {
+            throw new FileNotFoundException();
+        }
+        if (!getFileExtension(file).equals(Constants.PDF_EXTENSION)) {
+            throw new InvalidFileFormatException();
+        }
     }
 
     @Override
-    public ByteArrayResource download(int year, Semester semester, BigInteger id) {
-//        try {
-//            File file = new File("D:/Java Spring/scholarship_distribution/2020/Весна/photo_2019-06-24_17-40-08.jpg");
-//            InputStreamResource inputStreamResource = new InputStreamResource(new FileInputStream(file));
-//            return inputStreamResource;
-//        } catch (Exception e) {
-//            return null;
-//        }
+    public void upload(MultipartFile file) throws CoreException {
+        checkingFile(file);
         try {
-            File file = new File(getDir() + "/upload/" +
-                    String.valueOf(year) + "/" + semester.getName() + "/" + String.valueOf(id) + ".jpg");
-            Path path = Paths.get(file.getAbsolutePath());
-            ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
-            return resource;
+            file.transferTo(new File(getCurrentPath() + "/" + file.getOriginalFilename()));
+        } catch (IOException e) {
+            throw new CoreException();
+        }
+    }
+
+    @Override
+    public void upload(MultipartFile file, String name) throws CoreException {
+        checkingFile(file);
+        try {
+            file.transferTo(new File(getCurrentPath() + "/" + name + getFileExtension(file)));
+        } catch (IOException e) {
+            throw new CoreException();
+        }
+    }
+
+    @Override
+    public ByteArrayOutputStream download(String year, Semester semester, String name) throws CoreException {
+        try {
+            File file = new File(getDir() + "/" + year + "/" + semester + "/" + name + Constants.PDF_EXTENSION);
+            InputStream inputStream = new FileInputStream(file);
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            byteArrayOutputStream.writeBytes(inputStream.readAllBytes());
+            return byteArrayOutputStream;
         } catch (Exception e) {
-            return null;
+            throw new FileNotFoundException();
         }
     }
 }

@@ -5,17 +5,17 @@ import java.math.BigInteger;
 
 @Entity
 @Table(name = "settings")
-public class Setting {
+public class Settings {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private BigInteger id;
 
     private boolean activeRegistration;
 
-    public Setting() {
+    public Settings() {
     }
 
-    public Setting(boolean activeRegistration) {
+    public Settings(boolean activeRegistration) {
         this.activeRegistration = activeRegistration;
     }
 
