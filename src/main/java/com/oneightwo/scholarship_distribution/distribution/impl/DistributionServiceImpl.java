@@ -345,7 +345,7 @@ public class DistributionServiceImpl extends DistributionService {
         log.info("sum={}", sum);
         return winnersList;
     }
-
+    
     @Override
     public Map<String, List<Student>> getWinnerStudents(Semester semester, int year) {
         List<Student> studentList = studentService.getStudentBySemesterAndYear(semester, year);

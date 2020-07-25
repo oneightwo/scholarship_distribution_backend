@@ -14,6 +14,7 @@ import com.oneightwo.scholarship_distribution.security.model.User;
 import com.oneightwo.scholarship_distribution.security.repository.UserRepository;
 import com.oneightwo.scholarship_distribution.service.*;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +38,8 @@ import java.util.Optional;
 @RequestMapping("api/v2/admins/")
 @Slf4j
 public class AdminController {
+
+    LoggerFactory
 
     @Autowired
     private StudentService studentService;
@@ -76,6 +79,14 @@ public class AdminController {
                                           @RequestParam String semester,
                                           @PageableDefault(page = 0, size = 100)//ОШИБКА: столбец "ddf" не существует
                                           @SortDefault(sort = "surname", direction = Sort.Direction.ASC) Pageable pageable) throws SemesterNotFoundException {
+        return ResponseEntity.ok().body(studentService.getStudentBySemesterAndYear(Semester.getSemesterByName(semester), year, pageable));
+    }
+
+    @GetMapping("students")
+    private ResponseEntity<?> getStudents(@RequestParam int year,
+                                          @RequestParam String semester,
+                                          @PageableDefault(page = 0, size = 100)//ОШИБКА: столбец "ddf" не существует
+                                          @SortDefault(sort = "surname", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.ok().body(studentService.getStudentBySemesterAndYear(Semester.getSemesterByName(semester), year, pageable));
     }
 
