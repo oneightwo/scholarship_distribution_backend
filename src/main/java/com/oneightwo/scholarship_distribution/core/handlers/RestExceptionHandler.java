@@ -1,6 +1,6 @@
 package com.oneightwo.scholarship_distribution.core.handlers;
 
-import com.oneightwo.scholarship_distribution.core.models.ErrorView;
+import com.oneightwo.scholarship_distribution.core.models.ResponseErrorView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,20 +18,20 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        ErrorView errorView = new ErrorView(status, "Malformed JSON request", ex.getMessage());
-        return new ResponseEntity<>(errorView, status);
+        ResponseErrorView responseErrorView = new ResponseErrorView(status, "Malformed JSON request", ex.getMessage());
+        return new ResponseEntity<>(responseErrorView, status);
     }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        ErrorView errorView = new ErrorView(status, "Malformed JSON request", ex.getMessage());
-        return new ResponseEntity<>(errorView, status);
+        ResponseErrorView responseErrorView = new ResponseErrorView(status, "Malformed JSON request", ex.getMessage());
+        return new ResponseEntity<>(responseErrorView, status);
     }
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        ErrorView errorView = new ErrorView(status, "Malformed JSON request", ex.getMessage());
-        return new ResponseEntity<>(errorView, status);
+        ResponseErrorView responseErrorView = new ResponseErrorView(status, "Malformed JSON request", ex.getMessage());
+        return new ResponseEntity<>(responseErrorView, status);
     }
 
 

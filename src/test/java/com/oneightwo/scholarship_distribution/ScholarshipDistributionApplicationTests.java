@@ -1,82 +1,81 @@
 package com.oneightwo.scholarship_distribution;
 
-import com.oneightwo.scholarship_distribution.model.Course;
-import com.oneightwo.scholarship_distribution.model.ScienceDirection;
-import com.oneightwo.scholarship_distribution.model.Student;
-import com.oneightwo.scholarship_distribution.model.University;
-import com.oneightwo.scholarship_distribution.service.CourseService;
-import com.oneightwo.scholarship_distribution.service.ScienceDirectionService;
-import com.oneightwo.scholarship_distribution.service.StudentService;
-import com.oneightwo.scholarship_distribution.service.UniversityService;
+import com.oneightwo.scholarship_distribution.distribution.computing.services.impl.StudentsInDirectionsServiceImpl;
+import com.oneightwo.scholarship_distribution.distribution.computing.services.impl.StudentsInDirectionsAndUniversitiesServiceImpl;
+import com.oneightwo.scholarship_distribution.distribution.reports.services.ScholarshipDistributionByDirectionsAndUniversitiesReportService;
+import com.oneightwo.scholarship_distribution.distribution.reports.services.ScholarshipDistributionByDirectionsReportService;
+import com.oneightwo.scholarship_distribution.science_directions.services.ScienceDirectionService;
+import com.oneightwo.scholarship_distribution.students.services.StudentService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.math.BigInteger;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ScholarshipDistributionApplicationTests {
 
-//    @Test
+    @Autowired
+    private StudentService studentService;
 
-//    @Autowired
-//    private StudentService studentService;
-//
-//    @Autowired
-//    private UniversityService universityService;
-//
-//    @Autowired
-//    private ScienceDirectionService scienceDirectionService;
-//
-//    @Autowired
-//    private CourseService courseService;
-//
-//    @Test
-//    public void contextLoads() {
-//    }
-//
-//    public int getRandomNumber(int a, int b) {
-//        return a + (int) (Math.random() * b);
-//    }
-//
-//    private String generateWord() {
-//        String letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-//        String lettersLower = letters.toLowerCase();
-//        StringBuilder word = new StringBuilder();
-//        for (int i = 0; i < getRandomNumber(3, 10); i++) {
-//            word.append(i == 0 ? letters.charAt(getRandomNumber(0, letters.length() - 1)) : lettersLower.charAt(getRandomNumber(0, letters.length() - 1)));
-//        }
-//        return word.toString();
-//    }
-//
-//    public String getRandomString() {
-//        StringBuilder str = new StringBuilder();
-//        for (int i = 0; i < getRandomNumber(3, 15); i++) {
-//            str.append(generateWord()).append(" ");
-//        }
-//        return str.toString();
-//    }
-//
-//    @Test
-//    public void generateTestData() {
-//        for (int i = 0; i < 120; i++) {
-//            studentService.save(new Student(
+    @Autowired
+    private ScienceDirectionService scienceDirectionService;
+
+    @Autowired
+    private StudentsInDirectionsServiceImpl studentsInDirectionsServiceImpl;
+    @Autowired
+    private StudentsInDirectionsAndUniversitiesServiceImpl studentsInDirectionsAndUniversitiesServiceImpl;
+    @Autowired
+    private ScholarshipDistributionByDirectionsReportService scholarshipDistributionByDirectionsReportService;
+    @Autowired
+    private ScholarshipDistributionByDirectionsAndUniversitiesReportService scholarshipDistributionByDirectionsAndUniversitiesReportService;
+
+    @Test
+    public void test() {
+//        System.out.println(scienceDirectionService.getAll());
+//        test1();
+        test2();
+//        generateTestData(108);
+//        testDistributionInDirections();
+//        testDistributionInDirectionAndUniversities();
+
+    }
+
+    public void test1() {
+//        studentsInDirections.setStudents(studentService.getAll());
+//        System.out.println(studentsInDirections.getAssignedNumberScholarships());
+        scholarshipDistributionByDirectionsReportService.setStudents(studentService.getAll());
+        System.out.println("1 " + scholarshipDistributionByDirectionsReportService.getAssignedNumberScholarships());
+        System.out.println("2 " + scholarshipDistributionByDirectionsReportService.getAverageRatings());
+        System.out.println("3 " + scholarshipDistributionByDirectionsReportService.getMinimalRating());
+        System.out.println("4 " + scholarshipDistributionByDirectionsReportService.getNumberApplications());
+        System.out.println("5 " + scholarshipDistributionByDirectionsReportService.getNumberExcludedApplications());
+        System.out.println("6 " + scholarshipDistributionByDirectionsReportService.getNumberPassedApplications());
+    }
+
+    public void test2() {
+        scholarshipDistributionByDirectionsAndUniversitiesReportService.setStudents(studentService.getAll());
+        System.out.println(scholarshipDistributionByDirectionsAndUniversitiesReportService.getAllApplicationsSubmittedToUniversities());
+        System.out.println(scholarshipDistributionByDirectionsAndUniversitiesReportService.getExcludedApplicationsSubmittedToUniversities());
+        System.out.println(scholarshipDistributionByDirectionsAndUniversitiesReportService.getPassedApplicationsSubmittedToUniversities());
+        System.out.println(scholarshipDistributionByDirectionsAndUniversitiesReportService.getDataDistributionByUniversitiesInDirections());
+        System.out.println(scholarshipDistributionByDirectionsAndUniversitiesReportService.getDataDistributionByUniversitiesAndDirections());
+    }
+
+    public void generateTestData(int quantity) {
+
+//        for (int i = 0; i < quantity; i++) {
+//            studentService.save(new StudentDTO(
 //                    generateWord(),
 //                    generateWord(),
 //                    generateWord(),
-//                    universityService.getById(BigInteger.valueOf(getRandomNumber(1, 17))).orElse(new University()),
+//                    (long) getRandomNumber(1, 3),
 //                    generateWord(),
-//                    courseService.getById(BigInteger.valueOf(getRandomNumber(1, 3))).orElse(new Course()),
+//                    (long) getRandomNumber(1, 3),
 //                    generateWord() + "@" + generateWord() + ".com",
 //                    "88005553535",
-//                    scienceDirectionService.getById(BigInteger.valueOf(getRandomNumber(1, 3))).orElse(new ScienceDirection()),
+//                    (long) getRandomNumber(1, 3),
 //                    getRandomString(),
 //                    getRandomNumber(0, 5),
 //                    getRandomNumber(0, 5),
@@ -94,15 +93,39 @@ public class ScholarshipDistributionApplicationTests {
 //                    getRandomNumber(0, 5),
 //                    getRandomNumber(0, 5),
 //                    true
-//			));
+//            ));
 //        }
-//    }
-//
-//    @Autowired
-//    private BCryptPasswordEncoder bCryptPasswordEncoder;
-//
-//    @Test
-//    public void testC() {
-//        System.out.println(bCryptPasswordEncoder.encode("devglan-secret"));
-//    }
+    }
+
+    public int getRandomNumber(int a, int b) {
+        return a + (int) (Math.random() * b);
+    }
+
+    private String generateWord() {
+        String letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String lettersLower = letters.toLowerCase();
+        StringBuilder word = new StringBuilder();
+        for (int i = 0; i < getRandomNumber(3, 10); i++) {
+            word.append(i == 0 ? letters.charAt(getRandomNumber(0, letters.length() - 1)) : lettersLower.charAt(getRandomNumber(0, letters.length() - 1)));
+        }
+        return word.toString();
+    }
+
+    public String getRandomString() {
+        StringBuilder str = new StringBuilder();
+        for (int i = 0; i < getRandomNumber(3, 15); i++) {
+            str.append(generateWord()).append(" ");
+        }
+        return str.toString();
+    }
+
+    public void testDistributionInDirections() {
+        studentsInDirectionsServiceImpl.setStudents(studentService.getAll());
+        System.out.println(studentsInDirectionsServiceImpl.getAssignedNumberScholarships());
+    }
+
+    public void testDistributionInDirectionAndUniversities() {
+        studentsInDirectionsAndUniversitiesServiceImpl.setStudents(studentService.getAll());
+        System.out.println(studentsInDirectionsAndUniversitiesServiceImpl.getAssignedNumberScholarships());
+    }
 }
