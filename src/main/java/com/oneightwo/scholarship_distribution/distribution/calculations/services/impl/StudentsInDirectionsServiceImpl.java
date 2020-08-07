@@ -8,13 +8,14 @@ import com.oneightwo.scholarship_distribution.students.models.Student;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentsInDirectionsServiceImpl implements StudentsInDirectionsService {
 
     private final DistributionOperation distributionOperation;
-    private final DistributionUnit allStudentsInDirections = new DistributionUnit();
-    private final DistributionUnit passedStudentsInDirections = new DistributionUnit();
+    private DistributionUnit allStudentsInDirections;
+    private DistributionUnit passedStudentsInDirections;
 
     public StudentsInDirectionsServiceImpl(DistributionOperation distributionOperation) {
         this.distributionOperation = distributionOperation;
@@ -22,6 +23,8 @@ public class StudentsInDirectionsServiceImpl implements StudentsInDirectionsServ
 
     @Override
     public void setStudents(List<Student> students) {
+        allStudentsInDirections = new DistributionUnit();
+        passedStudentsInDirections = new DistributionUnit();
         addStudents(students, allStudentsInDirections);
         addStudents(getPassedStudents(), passedStudentsInDirections);
     }
@@ -49,8 +52,13 @@ public class StudentsInDirectionsServiceImpl implements StudentsInDirectionsServ
 
     private List<Student> calculationPassedStudentsBasedOnExcluded() {
         List<Student> students = new ArrayList<>();
-        getQuantityExcludedStudents().forEach((k, v) -> {
-            students.addAll(allStudentsInDirections.getStudentsOrDefaultById(k).subList(0, v));
+        List<Student> excludedStudents = getExcludedStudents();
+        allStudentsInDirections.getDistributionUnit().forEach((k, v) -> {
+            v.forEach(student -> {
+                if (!excludedStudents.contains(student)) {
+                    students.add(student);
+                }
+            });
         });
         return students;
     }
@@ -59,8 +67,12 @@ public class StudentsInDirectionsServiceImpl implements StudentsInDirectionsServ
     public List<Student> getExcludedStudents() {
         List<Student> students = new ArrayList<>();
         getQuantityExcludedStudents().forEach((k, v) -> {
-            students.addAll(allStudentsInDirections.getStudentsOrDefaultById(k).subList(0, v));
+            List<Student> studentsById = allStudentsInDirections.getStudentsOrDefaultById(k);
+            students.addAll(studentsById.stream()
+                        .sorted(Comparator.comparingInt(Student::getRating))
+                        .collect(Collectors.toList()).subList(0, v));
         });
+        System.out.println(students);
         return students;
     }
 
@@ -93,6 +105,7 @@ public class StudentsInDirectionsServiceImpl implements StudentsInDirectionsServ
         return numberApplicationsInDirections;
     }
 
+    //TODO it is crap
     @Override
     public Map<Long, Integer> getQuantityExcludedStudents() {
         Map<Long, Integer> excludedStudents = new HashMap<>();

@@ -1,8 +1,5 @@
 package com.oneightwo.scholarship_distribution.students.models;
 
-import com.oneightwo.scholarship_distribution.courses.models.Course;
-import com.oneightwo.scholarship_distribution.science_directions.models.ScienceDirection;
-import com.oneightwo.scholarship_distribution.universities.models.University;
 import lombok.*;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -33,8 +30,7 @@ public class StudentDTO implements Comparable<StudentDTO> {
     private String faculty;
 
     @NotNull
-    @JsonProperty("course_id")
-    private Long courseId;
+    private Integer course;
 
     @NotNull
     private String email;
@@ -99,13 +95,38 @@ public class StudentDTO implements Comparable<StudentDTO> {
     @JsonProperty("is_valid")
     private boolean isValid;
 
-    public StudentDTO(@NotNull String surname, @NotNull String name, String patronymic, Long universityId, @NotNull String faculty, @NotNull Long courseId, @NotNull String email, String phone, @NotNull Long scienceDirectionId, @NotNull String topic, @NotNull int c1, @NotNull int c2, @NotNull int c3, @NotNull int c4, @NotNull int c5, @NotNull int c6, @NotNull int c7, @NotNull int c8, @NotNull int c9, @NotNull int c10, @NotNull int c11, @NotNull int c12, @NotNull int c13, @NotNull int c14, @NotNull int c15, @NotNull boolean isValid) {
+    public StudentDTO(@NotNull String surname,
+                      @NotNull String name,
+                      String patronymic,
+                      Long universityId,
+                      @NotNull String faculty,
+                      @NotNull Integer course,
+                      @NotNull String email,
+                      String phone,
+                      @NotNull Long scienceDirectionId,
+                      @NotNull String topic,
+                      @NotNull int c1,
+                      @NotNull int c2,
+                      @NotNull int c3,
+                      @NotNull int c4,
+                      @NotNull int c5,
+                      @NotNull int c6,
+                      @NotNull int c7,
+                      @NotNull int c8,
+                      @NotNull int c9,
+                      @NotNull int c10,
+                      @NotNull int c11,
+                      @NotNull int c12,
+                      @NotNull int c13,
+                      @NotNull int c14,
+                      @NotNull int c15,
+                      @NotNull boolean isValid) {
         this.surname = surname;
         this.name = name;
         this.patronymic = patronymic;
         this.universityId = universityId;
         this.faculty = faculty;
-        this.courseId = courseId;
+        this.course = course;
         this.email = email;
         this.phone = phone;
         this.scienceDirectionId = scienceDirectionId;

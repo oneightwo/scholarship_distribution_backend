@@ -1,23 +1,24 @@
 package com.oneightwo.scholarship_distribution.distribution.reports.services.base;
 
+import com.oneightwo.scholarship_distribution.distribution.reports.models.ReportUnit;
 import com.oneightwo.scholarship_distribution.students.models.Student;
 
 import java.util.List;
-import java.util.TreeMap;
+import java.util.TreeSet;
 
 public interface ScholarshipDistributionByDirectionsReportService {
 
     void setStudents(List<Student> students);
 
-    TreeMap<Long, Integer> getNumberApplications();
+    TreeSet<ReportUnit<Long, Integer>> getNumberApplications();
 
-    TreeMap<Long, Double> getAverageRatings();
+    TreeSet<ReportUnit<Long, Double>> getAverageRatings();
 
-    TreeMap<Long, Double> getMinimalRating();
+    TreeSet<ReportUnit<Long, Double>> getMinimalRating();
 
-    TreeMap<Long, Integer> getNumberPassedApplications();
+    TreeSet<ReportUnit<Long, Integer>> getNumberPassedApplications();
 
-    TreeMap<Long, Integer> getNumberExcludedApplications();
+    TreeSet<ReportUnit<Long, Integer>> getNumberExcludedApplications();
 
-    TreeMap<Long, Integer> getAssignedNumberScholarships();
+    TreeSet<ReportUnit<Long, Integer>> getAssignedNumberScholarships();
 }

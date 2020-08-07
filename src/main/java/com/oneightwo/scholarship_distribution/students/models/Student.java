@@ -30,8 +30,7 @@ public class Student {
     private University university;
     @Column(nullable = false)
     private String faculty;
-    @JoinColumn(name = "course_id", nullable = false)
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH})
+    @Enumerated(EnumType.ORDINAL)
     private Course course;
     private String email;
     private String phone;

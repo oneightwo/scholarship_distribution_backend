@@ -1,18 +1,14 @@
 package com.oneightwo.scholarship_distribution.distribution.reports.services.base.impl;
 
 import com.oneightwo.scholarship_distribution.distribution.calculations.services.StudentsInDirectionsAndUniversitiesService;
+import com.oneightwo.scholarship_distribution.distribution.reports.models.ReportUnit;
 import com.oneightwo.scholarship_distribution.distribution.reports.models.UniversityReport;
 import com.oneightwo.scholarship_distribution.distribution.reports.services.base.ScholarshipDistributionByDirectionsAndUniversitiesReportService;
-import com.oneightwo.scholarship_distribution.science_directions.services.ScienceDirectionService;
 import com.oneightwo.scholarship_distribution.students.models.Student;
-import com.oneightwo.scholarship_distribution.universities.models.University;
-import com.oneightwo.scholarship_distribution.universities.services.UniversityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 @Service
 public final class ScholarshipDistributionByDirectionsAndUniversitiesReportServiceImpl
@@ -20,8 +16,8 @@ public final class ScholarshipDistributionByDirectionsAndUniversitiesReportServi
 
     private final StudentsInDirectionsAndUniversitiesService studentsInDirectionsAndUniversitiesService;
 
-    private final Map<Long, Map<Long, List<Student>>> passedStudentsInDirectionAndUniversity = new TreeMap<>();
-    private final Map<Long, Map<Long, List<Student>>> excludedStudentsInDirectionAndUniversity = new TreeMap<>();
+    private Map<Long, Map<Long, List<Student>>> passedStudentsInDirectionAndUniversity;
+    private Map<Long, Map<Long, List<Student>>> excludedStudentsInDirectionAndUniversity;
 
     @Autowired
     public ScholarshipDistributionByDirectionsAndUniversitiesReportServiceImpl(StudentsInDirectionsAndUniversitiesService studentsInDirectionsAndUniversitiesService) {
@@ -31,68 +27,92 @@ public final class ScholarshipDistributionByDirectionsAndUniversitiesReportServi
     @Override
     public void setStudents(List<Student> students) {
         studentsInDirectionsAndUniversitiesService.setStudents(students);
-        passedStudentsInDirectionAndUniversity.putAll(studentsInDirectionsAndUniversitiesService.getPassedStudents().getStudentsInDirectionAndUniversity());
-        excludedStudentsInDirectionAndUniversity.putAll(studentsInDirectionsAndUniversitiesService.getExcludedStudents().getStudentsInDirectionAndUniversity());
+        passedStudentsInDirectionAndUniversity = new TreeMap<>(studentsInDirectionsAndUniversitiesService.getPassedStudents().getStudentsInDirectionAndUniversity());
+        excludedStudentsInDirectionAndUniversity = new TreeMap<>(studentsInDirectionsAndUniversitiesService.getExcludedStudents().getStudentsInDirectionAndUniversity());
     }
 
     @Override
-    public TreeMap<Long, TreeMap<Long, UniversityReport>> getDataDistributionByUniversitiesInDirections() {
-        TreeMap<Long, TreeMap<Long, UniversityReport>> studentsInDirection = new TreeMap<>();
+    public TreeSet<ReportUnit<Long, TreeSet<ReportUnit<Long, UniversityReport>>>> getDataDistributionByUniversitiesInDirections() {
+        TreeSet<ReportUnit<Long, TreeSet<ReportUnit<Long, UniversityReport>>>> studentsInDirection = new TreeSet<>();
         Map<Long, Map<Long, Integer>> assignedNumberScholarships = studentsInDirectionsAndUniversitiesService.getAssignedNumberScholarships();
         Map<Long, Map<Long, Double>> averageRatings = studentsInDirectionsAndUniversitiesService.getAverageRatings();
         Map<Long, Map<Long, List<Student>>> passedStudents = studentsInDirectionsAndUniversitiesService.getPassedStudents().getStudentsInDirectionAndUniversity();
         passedStudents.forEach((sd, v) -> {
-            TreeMap<Long, UniversityReport> universityReport = new TreeMap<>();
+            ReportUnit<Long, TreeSet<ReportUnit<Long, UniversityReport>>> tempSd;
+            TreeSet<ReportUnit<Long, UniversityReport>> tempU = new TreeSet<>();
             v.forEach((u, students) -> {
-                universityReport.put(u,
-                        new UniversityReport(
-                                averageRatings.get(sd).get(u),
-                                passedStudents.get(sd).get(u).size(),
-                                assignedNumberScholarships.get(sd).get(u))
+                tempU.add(new ReportUnit<>(u, new UniversityReport(
+                        averageRatings.get(sd).get(u),
+                        passedStudents.get(sd).get(u).size(),
+                        assignedNumberScholarships.get(sd).get(u)))
                 );
             });
-            studentsInDirection.put(sd, universityReport);
+            tempSd = new ReportUnit<>(sd, tempU);
+            studentsInDirection.add(tempSd);
         });
         return studentsInDirection;
     }
 
     @Override
-    public TreeMap<Long, Integer> getAllApplicationsSubmittedToUniversities() {
-        TreeMap<Long, Integer> allApplicationsSubmittedToUniversities = new TreeMap<>();
-        setApplications(passedStudentsInDirectionAndUniversity, allApplicationsSubmittedToUniversities);
-        setApplications(excludedStudentsInDirectionAndUniversity, allApplicationsSubmittedToUniversities);
-        return allApplicationsSubmittedToUniversities;
+    public TreeSet<ReportUnit<Long, Integer>> getAllApplicationsSubmittedToUniversities() {
+        return converter(unionPassedAndExcludedStudents(passedStudentsInDirectionAndUniversity, excludedStudentsInDirectionAndUniversity));
     }
 
-    @Override
-    public TreeMap<Long, Integer> getPassedApplicationsSubmittedToUniversities() {
-        TreeMap<Long, Integer> passedApplicationsSubmittedToUniversities = new TreeMap<>();
-        setApplications(passedStudentsInDirectionAndUniversity, passedApplicationsSubmittedToUniversities);
-        return passedApplicationsSubmittedToUniversities;
-    }
+    private Map<Long, Map<Long, List<Student>>> unionPassedAndExcludedStudents(Map<Long, Map<Long, List<Student>>> passed,
+                                                                               Map<Long, Map<Long, List<Student>>> excluded) {
 
-    @Override
-    public TreeMap<Long, Integer> getExcludedApplicationsSubmittedToUniversities() {
-        TreeMap<Long, Integer> excludedApplicationsSubmittedToUniversities = new TreeMap<>();
-        setApplications(excludedStudentsInDirectionAndUniversity, excludedApplicationsSubmittedToUniversities);
-        return excludedApplicationsSubmittedToUniversities;
-    }
-
-    private void setApplications(Map<Long, Map<Long, List<Student>>> from, TreeMap<Long, Integer> to) {
-        from.forEach((sd, v) -> {
+        Map<Long, Map<Long, List<Student>>> result = new HashMap<>() {{
+            passed.forEach((sd, v) -> {
+                put(sd, new HashMap<>() {{
+                    v.forEach((u, sList) -> {
+                        put(u, List.copyOf(sList));
+                    });
+                }});
+            });
+        }};
+        excluded.forEach((sd, v) -> {
             v.forEach((u, students) -> {
-                to.merge(u, students.size(), Integer::sum);
+                List<Student> studentsList = new ArrayList<>(result.get(sd).get(u));
+                studentsList.addAll(students);
+                result.get(sd).put(u, studentsList);
             });
         });
+        return result;
     }
 
     @Override
-    public TreeMap<Long, TreeMap<Long, Integer>> getDataDistributionByUniversitiesAndDirections() {
-        TreeMap<Long, TreeMap<Long, Integer>> dataDistributionByUniversitiesAndDirections = new TreeMap<>();
+    public TreeSet<ReportUnit<Long, Integer>> getPassedApplicationsSubmittedToUniversities() {
+        return converter(passedStudentsInDirectionAndUniversity);
+    }
+
+    @Override
+    public TreeSet<ReportUnit<Long, Integer>> getExcludedApplicationsSubmittedToUniversities() {
+        return converter(excludedStudentsInDirectionAndUniversity);
+    }
+
+    private TreeSet<ReportUnit<Long, Integer>> converter(Map<Long, Map<Long, List<Student>>> from) {
+        TreeSet<ReportUnit<Long, Integer>> to = new TreeSet<>();
+        Map<Long, Integer> temp = new HashMap<>();
+        from.forEach((sd, v) -> {
+            v.forEach((u, students) -> {
+                temp.merge(u, students.size(), Integer::sum);
+            });
+        });
+        temp.forEach((k, v) -> {
+            to.add(new ReportUnit<>(k, v));
+        });
+        return to;
+    }
+
+    @Override // TreeMap<Long, TreeMap<Long, Integer>>
+    public TreeSet<ReportUnit<Long, TreeSet<ReportUnit<Long, Integer>>>> getDataDistributionByUniversitiesAndDirections() {
+        TreeSet<ReportUnit<Long, TreeSet<ReportUnit<Long, Integer>>>> dataDistributionByUniversitiesAndDirections = new TreeSet<>();
         studentsInDirectionsAndUniversitiesService.getAssignedNumberScholarships().forEach((sd, v) -> {
-            TreeMap<Long, Integer> quantityScholarshipInUniversities = new TreeMap<>();
-            v.forEach(quantityScholarshipInUniversities::put);
-            dataDistributionByUniversitiesAndDirections.put(sd, quantityScholarshipInUniversities);
+            TreeSet<ReportUnit<Long, Integer>> temp = new TreeSet<>();
+            v.forEach((u, val) -> {
+                temp.add(new ReportUnit<>(u, val));
+            });
+            dataDistributionByUniversitiesAndDirections.add(new ReportUnit<>(sd, temp));
         });
         return dataDistributionByUniversitiesAndDirections;
     }

@@ -1,61 +1,58 @@
 package com.oneightwo.scholarship_distribution.universities.services.impl;
 
-import com.oneightwo.scholarship_distribution.students.services.impl.StudentServiceImpl;
+import com.oneightwo.scholarship_distribution.core.exceptions.CoreException;
 import com.oneightwo.scholarship_distribution.universities.models.University;
 import com.oneightwo.scholarship_distribution.universities.repositories.UniversityRepository;
 import com.oneightwo.scholarship_distribution.universities.services.UniversityService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UniversityServiceImpl implements UniversityService {
 
-    @Autowired
-    private UniversityRepository universityRepository;
+    private final UniversityRepository universityRepository;
 
-    private Logger log = LoggerFactory.getLogger(StudentServiceImpl.class);
-
-    @Transactional(readOnly = true)
-    @Override
-    public Optional<University> getById(Long id) {
-        return universityRepository.findById(id);
+    public UniversityServiceImpl(UniversityRepository universityRepository) {
+        this.universityRepository = universityRepository;
     }
 
-    @Transactional(readOnly = true)
     @Override
-    public List<University> getAll() {
-        List<University> universityList = universityRepository.findAll();
-        universityList.sort(Comparator.comparing(University::getName));
-        return universityList;
+    public University getById(Long id) throws CoreException {
+        return universityRepository.findById(id).orElseThrow(CoreException::new);
     }
 
-    @Transactional
     @Override
     public University save(University university) {
         return universityRepository.save(university);
     }
 
-    @Transactional
     @Override
-    public boolean deleteById(Long id) {
-        if (universityRepository.findById(id).isPresent()) {
-            universityRepository.deleteById(id);
-            return true;
-        } else {
-            return false;
-        }
+    public List<University> getExisting() {
+        return universityRepository.getExisting();
     }
 
-    @Transactional
     @Override
-    public University update(University university) {
+    public List<University> getExistingAndDeleted() {
+        return universityRepository.findAll();
+    }
+
+    @Override
+    public University update(University university) throws CoreException {
+        getById(university.getId());
         return universityRepository.save(university);
+    }
+
+    @Override
+    public void markDeleteById(Long id) throws CoreException {
+        University university = getById(id);
+        university.setDeleted(true);
+        universityRepository.save(university);
+    }
+
+    @Override
+    public void deleteById(Long id) throws CoreException {
+        getById(id);
+        universityRepository.deleteById(id);
     }
 }

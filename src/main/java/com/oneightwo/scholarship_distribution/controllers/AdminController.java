@@ -6,8 +6,6 @@ import com.oneightwo.scholarship_distribution.files_storage.constants.Constants;
 import com.oneightwo.scholarship_distribution.files_storage.services.FileService;
 import com.oneightwo.scholarship_distribution.science_directions.models.ScienceDirection;
 import com.oneightwo.scholarship_distribution.science_directions.services.ScienceDirectionService;
-import com.oneightwo.scholarship_distribution.security.models.User;
-import com.oneightwo.scholarship_distribution.security.repositories.UserRepository;
 import com.oneightwo.scholarship_distribution.settings.models.Settings;
 import com.oneightwo.scholarship_distribution.settings.services.SettingService;
 import com.oneightwo.scholarship_distribution.students.services.StudentService;
@@ -38,8 +36,8 @@ public class AdminController {
     private ScienceDirectionService scienceDirectionService;
 //    @Autowired
 //    private DistributionService distributionService;
-    @Autowired
-    private UserRepository userRepository;
+//    @Autowired
+//    private UserRepository userRepository;
 //    @Autowired
 //    private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
@@ -105,11 +103,11 @@ public class AdminController {
 
     @GetMapping("universities")
     private ResponseEntity<?> getUniversities() {
-        return ResponseEntity.ok(universityService.getAll());
+        return ResponseEntity.ok(universityService.getExisting());
     }
 
     @GetMapping("universities/{id}")
-    private ResponseEntity<?> getUniversity(@PathVariable Long id) {
+    private ResponseEntity<?> getUniversity(@PathVariable Long id) throws CoreException {
         return ResponseEntity.ok().body(Optional.of(universityService.getById(id)));
     }
 
@@ -129,17 +127,17 @@ public class AdminController {
         }
     }
 
-    @DeleteMapping("universities/{id}")
-    private ResponseEntity<?> deleteUniversity(@PathVariable Long id) {
-        return universityService.deleteById(id) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
-    }
+//    @DeleteMapping("universities/{id}")
+//    private ResponseEntity<?> deleteUniversity(@PathVariable Long id) {
+//        return universityService.deleteById(id) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+//    }
 
     //-----ScienceDirection-----
 
-    @GetMapping("scienceDirections")
-    private ResponseEntity<?> getScienceDirections() {
-        return ResponseEntity.ok(scienceDirectionService.getAll());
-    }
+//    @GetMapping("scienceDirections")
+//    private ResponseEntity<?> getScienceDirections() {
+//        return ResponseEntity.ok(scienceDirectionService.getAll());
+//    }
 
     @PutMapping("scienceDirections/{id}")
     private ResponseEntity<?> updateScienceDirection(@PathVariable("id") ScienceDirection scienceDirectionFromDB,
@@ -201,16 +199,16 @@ public class AdminController {
 
     //-----Registration-----
 
-    @GetMapping("users")
-    private ResponseEntity<?> getUsers() {
-        return ResponseEntity.ok(userRepository.findAll());
-    }
-
-    @PostMapping("registration")
-    private ResponseEntity<?> setAdmin(@Valid @RequestBody User user) {
-//        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        return ResponseEntity.ok().body(userRepository.save(user));
-    }
+//    @GetMapping("users")
+//    private ResponseEntity<?> getUsers() {
+//        return ResponseEntity.ok(userRepository.findAll());
+//    }
+//
+//    @PostMapping("registration")
+//    private ResponseEntity<?> setAdmin(@Valid @RequestBody User user) {
+////        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+//        return ResponseEntity.ok().body(userRepository.save(user));
+//    }
 
     //-----DownloadFile-----
 

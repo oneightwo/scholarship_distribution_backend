@@ -1,22 +1,23 @@
 package com.oneightwo.scholarship_distribution.distribution.reports.services.base;
 
+import com.oneightwo.scholarship_distribution.distribution.reports.models.ReportUnit;
 import com.oneightwo.scholarship_distribution.distribution.reports.models.UniversityReport;
 import com.oneightwo.scholarship_distribution.students.models.Student;
 
 import java.util.List;
-import java.util.TreeMap;
+import java.util.TreeSet;
 
 public interface ScholarshipDistributionByDirectionsAndUniversitiesReportService {
 
     void setStudents(List<Student> students);
 
-    TreeMap<Long, TreeMap<Long, UniversityReport>> getDataDistributionByUniversitiesInDirections();
+    TreeSet<ReportUnit<Long, TreeSet<ReportUnit<Long, UniversityReport>>>> getDataDistributionByUniversitiesInDirections();
 
-    TreeMap<Long, Integer> getAllApplicationsSubmittedToUniversities();
+    TreeSet<ReportUnit<Long, Integer>> getAllApplicationsSubmittedToUniversities();
 
-    TreeMap<Long, Integer> getPassedApplicationsSubmittedToUniversities();
+    TreeSet<ReportUnit<Long, Integer>> getPassedApplicationsSubmittedToUniversities();
 
-    TreeMap<Long, Integer> getExcludedApplicationsSubmittedToUniversities();
+    TreeSet<ReportUnit<Long, Integer>> getExcludedApplicationsSubmittedToUniversities();
 
-    TreeMap<Long, TreeMap<Long, Integer>> getDataDistributionByUniversitiesAndDirections();
+    TreeSet<ReportUnit<Long, TreeSet<ReportUnit<Long, Integer>>>> getDataDistributionByUniversitiesAndDirections();
 }

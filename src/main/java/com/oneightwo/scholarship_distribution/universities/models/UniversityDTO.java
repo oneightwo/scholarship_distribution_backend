@@ -1,4 +1,4 @@
-package com.oneightwo.scholarship_distribution.science_directions.models;
+package com.oneightwo.scholarship_distribution.universities.models;
 
 import lombok.*;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -10,15 +10,16 @@ import org.jetbrains.annotations.NotNull;
 @Setter
 @ToString
 @EqualsAndHashCode
-public class ScienceDirectionDTO implements Comparable<ScienceDirectionDTO> {
+public class UniversityDTO implements Comparable<UniversityDTO> {
 
-    @JsonProperty("science_direction_id")
+    @JsonProperty("university_id")
     private Long id;
     private String name;
+    private String abbreviation;
     private boolean deleted;
 
     @Override
-    public int compareTo(@NotNull ScienceDirectionDTO o) {
+    public int compareTo(@NotNull UniversityDTO o) {
         return this.id.compareTo(o.id);
     }
 }

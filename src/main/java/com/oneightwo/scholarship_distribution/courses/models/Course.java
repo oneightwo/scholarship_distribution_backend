@@ -1,22 +1,29 @@
 package com.oneightwo.scholarship_distribution.courses.models;
 
-import lombok.*;
+import java.util.NoSuchElementException;
 
-import javax.persistence.*;
+public enum Course {
 
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
-@EqualsAndHashCode
-@Getter
-@Setter
-@Entity
-@Table(name = "courses")
-public class Course {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "course_id")
-    private Long id;
-    @Column(nullable = false)
-    private Integer name;
+    FIRST(1),
+    SECOND(2),
+    THIRD(3);
+
+    private final int value;
+
+    Course(int value) {
+        this.value = value;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public static Course getByValue(int value) {
+        for (Course v : Course.values()) {
+            if (v.getValue() == value) {
+                return v;
+            }
+        }
+        throw new NoSuchElementException("Не существует семестр: " + value);
+    }
 }

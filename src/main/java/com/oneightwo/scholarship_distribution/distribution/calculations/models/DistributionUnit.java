@@ -6,16 +6,23 @@ import java.util.*;
 
 public class DistributionUnit {
 
-    private final Map<Long, List<Student>> distributionUnit = new HashMap<>();
+    private final Map<Long, List<Student>> distributionUnit;
+
+    public DistributionUnit() {
+        this.distributionUnit = new HashMap<>();
+    }
+
+    public DistributionUnit(DistributionUnit distributionUnit) {
+        this.distributionUnit = new HashMap<>(distributionUnit.getDistributionUnit());
+    }
 
     public Map<Long, List<Student>> getDistributionUnit() {
         return distributionUnit;
     }
 
     public void addStudentById(Student student, Long id) {
-        List<Student> studentList = getStudentsOrDefaultById(id);
+        List<Student> studentList = new ArrayList<>(getStudentsOrDefaultById(id));
         studentList.add(student);
-        studentList.sort(Comparator.comparingInt(Student::getRating));
         distributionUnit.put(id, studentList);
     }
 

@@ -1,10 +1,16 @@
 package com.oneightwo.scholarship_distribution;
 
+import com.oneightwo.scholarship_distribution.core.helpers.TransformationHelper;
 import com.oneightwo.scholarship_distribution.distribution.calculations.services.impl.StudentsInDirectionsServiceImpl;
 import com.oneightwo.scholarship_distribution.distribution.calculations.services.impl.StudentsInDirectionsAndUniversitiesServiceImpl;
+import com.oneightwo.scholarship_distribution.distribution.constants.Semester;
+import com.oneightwo.scholarship_distribution.distribution.reports.models.ReportByUniversities;
+import com.oneightwo.scholarship_distribution.distribution.reports.services.ReportByScienceDirectionsService;
+import com.oneightwo.scholarship_distribution.distribution.reports.services.ReportByUniversitiesService;
 import com.oneightwo.scholarship_distribution.distribution.reports.services.base.ScholarshipDistributionByDirectionsAndUniversitiesReportService;
 import com.oneightwo.scholarship_distribution.distribution.reports.services.base.ScholarshipDistributionByDirectionsReportService;
 import com.oneightwo.scholarship_distribution.science_directions.services.ScienceDirectionService;
+import com.oneightwo.scholarship_distribution.students.models.StudentDTO;
 import com.oneightwo.scholarship_distribution.students.services.StudentService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,11 +41,26 @@ public class ScholarshipDistributionApplicationTests {
     public void test() {
 //        System.out.println(scienceDirectionService.getAll());
 //        test1();
-        test2();
-//        generateTestData(108);
+//        test2();
+//        test3();
+        generateTestData(108);
 //        testDistributionInDirections();
 //        testDistributionInDirectionAndUniversities();
 
+    }
+
+    @Autowired
+    private ReportByScienceDirectionsService reportByScienceDirectionsService;
+
+    public void test3() {
+        System.out.println(reportByScienceDirectionsService.execute(Semester.SPRING, 2020));
+    }
+
+    @Autowired
+    private ReportByUniversitiesService reportByUniversitiesService;
+
+    public void test4() {
+        System.out.println(reportByUniversitiesService.execute(Semester.SPRING, 2020));
     }
 
     public void test1() {
@@ -65,40 +86,40 @@ public class ScholarshipDistributionApplicationTests {
 
     public void generateTestData(int quantity) {
 
-//        for (int i = 0; i < quantity; i++) {
-//            studentService.save(new StudentDTO(
-//                    generateWord(),
-//                    generateWord(),
-//                    generateWord(),
-//                    (long) getRandomNumber(1, 3),
-//                    generateWord(),
-//                    (long) getRandomNumber(1, 3),
-//                    generateWord() + "@" + generateWord() + ".com",
-//                    "88005553535",
-//                    (long) getRandomNumber(1, 3),
-//                    getRandomString(),
-//                    getRandomNumber(0, 5),
-//                    getRandomNumber(0, 5),
-//                    getRandomNumber(0, 5),
-//                    getRandomNumber(0, 5),
-//                    getRandomNumber(0, 5),
-//                    getRandomNumber(0, 5),
-//                    getRandomNumber(0, 5),
-//                    getRandomNumber(0, 5),
-//                    getRandomNumber(0, 5),
-//                    getRandomNumber(0, 5),
-//                    getRandomNumber(0, 5),
-//                    getRandomNumber(0, 5),
-//                    getRandomNumber(0, 5),
-//                    getRandomNumber(0, 5),
-//                    getRandomNumber(0, 5),
-//                    true
-//            ));
-//        }
+        for (int i = 0; i < quantity; i++) {
+            studentService.save(TransformationHelper.dtoToObject(new StudentDTO(
+                    generateWord(),
+                    generateWord(),
+                    generateWord(),
+                    (long) getRandomNumber(1, 3),
+                    generateWord(),
+                    getRandomNumber(1, 3),
+                    generateWord() + "@" + generateWord() + ".com",
+                    "88005553535",
+                    (long) getRandomNumber(1, 3),
+                    getRandomString(),
+                    getRandomNumber(0, 5),
+                    getRandomNumber(0, 5),
+                    getRandomNumber(0, 5),
+                    getRandomNumber(0, 5),
+                    getRandomNumber(0, 5),
+                    getRandomNumber(0, 5),
+                    getRandomNumber(0, 5),
+                    getRandomNumber(0, 5),
+                    getRandomNumber(0, 5),
+                    getRandomNumber(0, 5),
+                    getRandomNumber(0, 5),
+                    getRandomNumber(0, 5),
+                    getRandomNumber(0, 5),
+                    getRandomNumber(0, 5),
+                    getRandomNumber(0, 5),
+                    true
+            )));
+        }
     }
 
     public int getRandomNumber(int a, int b) {
-        return a + (int) (Math.random() * b);
+        return (int) (Math.random() * ((b - a) + 1)) + a;
     }
 
     private String generateWord() {

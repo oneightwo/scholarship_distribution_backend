@@ -6,6 +6,7 @@ import com.oneightwo.scholarship_distribution.science_directions.models.ScienceD
 import com.oneightwo.scholarship_distribution.students.models.Student;
 import com.oneightwo.scholarship_distribution.students.models.StudentDTO;
 import com.oneightwo.scholarship_distribution.universities.models.University;
+import com.oneightwo.scholarship_distribution.universities.models.UniversityDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,6 +14,12 @@ import java.util.List;
 
 @Service
 final public class TransformationHelper {
+
+    public static List<StudentDTO> studentsToDtos(List<Student> students) {
+        List<StudentDTO> studentDTOs = new ArrayList<>();
+        students.forEach(student -> studentDTOs.add(objectToDto(student)));
+        return studentDTOs;
+    }
 
     public static StudentDTO objectToDto(Student student) {
         return new StudentDTO(
@@ -22,7 +29,7 @@ final public class TransformationHelper {
                 student.getPatronymic(),
                 student.getUniversity().getId(),
                 student.getFaculty(),
-                student.getCourse().getId(),
+                student.getCourse().getValue(),
                 student.getEmail(),
                 student.getPhone(),
                 student.getScienceDirection().getId(),
@@ -57,9 +64,7 @@ final public class TransformationHelper {
         university.setId(studentDTO.getUniversityId());
         student.setUniversity(university);
         student.setFaculty(studentDTO.getFaculty());
-        var course = new Course();
-        course.setId(studentDTO.getCourseId());
-        student.setCourse(course);
+        student.setCourse(Course.getByValue(studentDTO.getCourse()));
         student.setEmail(studentDTO.getEmail());
         student.setPhone(studentDTO.getPhone());
         var sd = new ScienceDirection();
@@ -86,10 +91,10 @@ final public class TransformationHelper {
         return student;
     }
 
-    public static List<StudentDTO> objectsToDtos(List<Student> students) {
-        List<StudentDTO> studentDTOs = new ArrayList<>();
-        students.forEach(student -> studentDTOs.add(objectToDto(student)));
-        return studentDTOs;
+    public static List<ScienceDirectionDTO> scienceDirectionsToDtos(List<ScienceDirection> scienceDirections) {
+        List<ScienceDirectionDTO> scienceDirectionDTOs = new ArrayList<>();
+        scienceDirections.forEach(scienceDirection -> scienceDirectionDTOs.add(objectToDto(scienceDirection)));
+        return scienceDirectionDTOs;
     }
 
     public static ScienceDirectionDTO objectToDto(ScienceDirection scienceDirection) {
@@ -108,9 +113,27 @@ final public class TransformationHelper {
         );
     }
 
-    public static List<ScienceDirectionDTO> objectToDtos(List<ScienceDirection> scienceDirections) {
-        List<ScienceDirectionDTO> scienceDirectionDTOs = new ArrayList<>();
-        scienceDirections.forEach(student -> scienceDirectionDTOs.add(objectToDto(student)));
-        return scienceDirectionDTOs;
+    public static List<UniversityDTO> universitiesToDtos(List<University> universities) {
+        List<UniversityDTO> universityDTOs = new ArrayList<>();
+        universities.forEach(university -> universityDTOs.add(objectToDto(university)));
+        return universityDTOs;
+    }
+
+    public static University dtoToObject(UniversityDTO universityDTO) {
+        return new University(
+                universityDTO.getId(),
+                universityDTO.getName(),
+                universityDTO.getAbbreviation(),
+                universityDTO.isDeleted()
+        );
+    }
+
+    public static UniversityDTO objectToDto(University university) {
+        return new UniversityDTO(
+                university.getId(),
+                university.getName(),
+                university.getAbbreviation(),
+                university.isDeleted()
+        );
     }
 }

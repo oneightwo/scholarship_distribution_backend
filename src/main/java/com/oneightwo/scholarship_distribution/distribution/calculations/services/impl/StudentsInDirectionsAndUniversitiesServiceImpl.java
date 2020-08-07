@@ -58,11 +58,11 @@ public class StudentsInDirectionsAndUniversitiesServiceImpl implements StudentsI
     public Map<Long, Map<Long, Double>> getAverageRatings() {
         Map<Long, Map<Long, Double>> averageRatingInDirections = new HashMap<>();
         passedStudents.getStudentsInDirectionAndUniversity().forEach((sd, v) -> {
+            Map<Long, Double> temp = new HashMap<>();
             v.forEach((u, students) -> {
-                averageRatingInDirections.put(sd, new HashMap<>(){{
-                    put(u, (double) students.stream().mapToInt(Student::getRating).sum() / students.size());
-                }});
+                temp.put(u, (double) students.stream().mapToInt(Student::getRating).sum() / students.size());
             });
+            averageRatingInDirections.put(sd, temp);
         });
         return averageRatingInDirections;
     }

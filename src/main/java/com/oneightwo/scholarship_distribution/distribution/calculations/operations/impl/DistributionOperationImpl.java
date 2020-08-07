@@ -17,7 +17,7 @@ public class DistributionOperationImpl implements DistributionOperation {
     @Override
     public Map<Long, Integer> execute(DistributionUnit distributionUnit, int quota) {
         result = new HashMap<>();
-        this.distributionUnit = distributionUnit;
+        this.distributionUnit = new DistributionUnit(distributionUnit);
         this.quota = quota;
 
         while (this.quota != 0) {

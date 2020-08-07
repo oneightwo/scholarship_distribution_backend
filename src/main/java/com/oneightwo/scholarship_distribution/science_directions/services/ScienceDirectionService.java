@@ -9,8 +9,15 @@ public interface ScienceDirectionService {
 
     ScienceDirection getById(Long id) throws CoreException;
 
-    @Deprecated
-    List<ScienceDirection> getAll();
+    ScienceDirection save(ScienceDirection scienceDirection);
 
-    ScienceDirection update(ScienceDirection scienceDirection);
+    List<ScienceDirection> getExisting();
+
+    List<ScienceDirection> getExistingAndDeleted();
+
+    ScienceDirection update(ScienceDirection scienceDirection) throws CoreException;
+
+    void markDeleteById(Long id) throws CoreException;
+
+    void deleteById(Long id) throws CoreException;
 }

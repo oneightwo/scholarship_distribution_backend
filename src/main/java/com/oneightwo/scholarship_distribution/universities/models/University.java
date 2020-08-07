@@ -23,8 +23,4 @@ public class University {
     private String abbreviation;
     @Column(nullable = false)
     private boolean deleted;
-
-    //    @JsonIgnore
-//    @OneToMany(fetch = FetchType.EAGER, mappedBy = "university")
-//    private List<Student> students;
 }
