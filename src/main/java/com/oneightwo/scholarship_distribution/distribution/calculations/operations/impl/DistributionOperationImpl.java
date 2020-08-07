@@ -1,7 +1,7 @@
-package com.oneightwo.scholarship_distribution.distribution.computing.operations;
+package com.oneightwo.scholarship_distribution.distribution.calculations.operations.impl;
 
-
-import com.oneightwo.scholarship_distribution.distribution.computing.models.DistributionUnit;
+import com.oneightwo.scholarship_distribution.distribution.calculations.models.DistributionUnit;
+import com.oneightwo.scholarship_distribution.distribution.calculations.operations.DistributionOperation;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -13,7 +13,6 @@ public class DistributionOperationImpl implements DistributionOperation {
     private DistributionUnit distributionUnit;
     private int quota;
     private Map<Long, Integer> result;
-
 
     @Override
     public Map<Long, Integer> execute(DistributionUnit distributionUnit, int quota) {

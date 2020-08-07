@@ -1,4 +1,4 @@
-package com.oneightwo.scholarship_distribution.distribution.computing.models;
+package com.oneightwo.scholarship_distribution.distribution.calculations.models;
 
 import com.oneightwo.scholarship_distribution.students.models.Student;
 

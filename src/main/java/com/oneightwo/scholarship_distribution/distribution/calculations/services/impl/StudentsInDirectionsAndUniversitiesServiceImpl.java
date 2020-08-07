@@ -1,10 +1,10 @@
-package com.oneightwo.scholarship_distribution.distribution.computing.services.impl;
+package com.oneightwo.scholarship_distribution.distribution.calculations.services.impl;
 
-import com.oneightwo.scholarship_distribution.distribution.computing.models.ExcludedStudents;
-import com.oneightwo.scholarship_distribution.distribution.computing.models.PassedStudents;
-import com.oneightwo.scholarship_distribution.distribution.computing.operations.DistributionOperation;
-import com.oneightwo.scholarship_distribution.distribution.computing.services.StudentsInDirectionsAndUniversitiesService;
-import com.oneightwo.scholarship_distribution.distribution.computing.services.StudentsInDirectionsService;
+import com.oneightwo.scholarship_distribution.distribution.calculations.models.ExcludedStudents;
+import com.oneightwo.scholarship_distribution.distribution.calculations.models.PassedStudents;
+import com.oneightwo.scholarship_distribution.distribution.calculations.operations.DistributionOperation;
+import com.oneightwo.scholarship_distribution.distribution.calculations.services.StudentsInDirectionsAndUniversitiesService;
+import com.oneightwo.scholarship_distribution.distribution.calculations.services.StudentsInDirectionsService;
 import com.oneightwo.scholarship_distribution.students.models.Student;
 import org.springframework.stereotype.Service;
 

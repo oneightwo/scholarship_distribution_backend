@@ -1,7 +1,6 @@
-package com.oneightwo.scholarship_distribution.distribution.computing.models;
+package com.oneightwo.scholarship_distribution.distribution.calculations.models;
 
 import com.oneightwo.scholarship_distribution.core.exceptions.CoreException;
-import com.oneightwo.scholarship_distribution.distribution.computing.models.DistributionUnit;
 import com.oneightwo.scholarship_distribution.students.models.Student;
 
 import java.util.HashMap;

@@ -2,7 +2,7 @@ package com.oneightwo.scholarship_distribution.students.services.impl;
 
 import com.oneightwo.scholarship_distribution.core.exceptions.CoreException;
 import com.oneightwo.scholarship_distribution.core.exceptions.StudentNotFoundException;
-import com.oneightwo.scholarship_distribution.distribution.computing.services.CalculateRatingService;
+import com.oneightwo.scholarship_distribution.distribution.calculations.services.CalculateRatingService;
 import com.oneightwo.scholarship_distribution.distribution.constants.Semester;
 import com.oneightwo.scholarship_distribution.students.models.Student;
 import com.oneightwo.scholarship_distribution.students.repositories.StudentRepository;
@@ -82,12 +82,11 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<Student> getStudentsBySemesterAndYear(Semester semester, int year) {
-        return null;
+        return studentRepository.getStudentByMonthsAndYear(semester.getMonths(), year);
     }
 
     @Override
     public List<Student> getStudentsBySemesterAndYear(Semester semester, int year, Pageable pageable) {
         return studentRepository.getStudentByMonthsAndYear(semester.getMonths(), year, pageable);
     }
-
 }

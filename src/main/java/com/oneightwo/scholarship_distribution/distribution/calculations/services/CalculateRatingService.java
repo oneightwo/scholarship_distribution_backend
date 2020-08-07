@@ -1,4 +1,4 @@
-package com.oneightwo.scholarship_distribution.distribution.computing.services;
+package com.oneightwo.scholarship_distribution.distribution.calculations.services;
 
 import org.springframework.stereotype.Service;
 

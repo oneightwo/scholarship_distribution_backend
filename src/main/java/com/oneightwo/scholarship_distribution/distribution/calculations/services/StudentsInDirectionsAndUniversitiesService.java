@@ -1,7 +1,7 @@
-package com.oneightwo.scholarship_distribution.distribution.computing.services;
+package com.oneightwo.scholarship_distribution.distribution.calculations.services;
 
-import com.oneightwo.scholarship_distribution.distribution.computing.models.ExcludedStudents;
-import com.oneightwo.scholarship_distribution.distribution.computing.models.PassedStudents;
+import com.oneightwo.scholarship_distribution.distribution.calculations.models.ExcludedStudents;
+import com.oneightwo.scholarship_distribution.distribution.calculations.models.PassedStudents;
 import com.oneightwo.scholarship_distribution.students.models.Student;
 
 import java.util.List;

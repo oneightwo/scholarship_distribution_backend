@@ -1,4 +1,4 @@
-package com.oneightwo.scholarship_distribution.distribution.computing.services;
+package com.oneightwo.scholarship_distribution.distribution.calculations.services;
 
 import com.oneightwo.scholarship_distribution.students.models.Student;
 
@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 public interface StudentsInDirectionsService {
-
-//    List<Student> getStudentsByDirectionId(Long idDirection);
 
     void setStudents(List<Student> students);
 

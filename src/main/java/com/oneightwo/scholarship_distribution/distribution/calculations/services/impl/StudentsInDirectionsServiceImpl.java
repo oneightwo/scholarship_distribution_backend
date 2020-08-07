@@ -1,8 +1,8 @@
-package com.oneightwo.scholarship_distribution.distribution.computing.services.impl;
+package com.oneightwo.scholarship_distribution.distribution.calculations.services.impl;
 
-import com.oneightwo.scholarship_distribution.distribution.computing.operations.DistributionOperation;
-import com.oneightwo.scholarship_distribution.distribution.computing.models.DistributionUnit;
-import com.oneightwo.scholarship_distribution.distribution.computing.services.StudentsInDirectionsService;
+import com.oneightwo.scholarship_distribution.distribution.calculations.operations.DistributionOperation;
+import com.oneightwo.scholarship_distribution.distribution.calculations.models.DistributionUnit;
+import com.oneightwo.scholarship_distribution.distribution.calculations.services.StudentsInDirectionsService;
 import com.oneightwo.scholarship_distribution.distribution.constants.Constants;
 import com.oneightwo.scholarship_distribution.students.models.Student;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,6 @@ public class StudentsInDirectionsServiceImpl implements StudentsInDirectionsServ
     private final DistributionOperation distributionOperation;
     private final DistributionUnit allStudentsInDirections = new DistributionUnit();
     private final DistributionUnit passedStudentsInDirections = new DistributionUnit();
-    private final List<Student> studentList = new ArrayList<>();
 
     public StudentsInDirectionsServiceImpl(DistributionOperation distributionOperation) {
         this.distributionOperation = distributionOperation;
@@ -23,14 +22,9 @@ public class StudentsInDirectionsServiceImpl implements StudentsInDirectionsServ
 
     @Override
     public void setStudents(List<Student> students) {
-        studentList.addAll(students);
         addStudents(students, allStudentsInDirections);
         addStudents(getPassedStudents(), passedStudentsInDirections);
     }
-
-//    public List<Student> getStudentsByDirectionId(Long idDirection) {
-//        return allStudentsInDirections.getStudentsOrDefaultById(idDirection);
-//    }
 
     private void addStudents(List<Student> students, DistributionUnit appointment) {
         students.forEach(student ->
@@ -128,9 +122,5 @@ public class StudentsInDirectionsServiceImpl implements StudentsInDirectionsServ
     @Override
     public Map<Long, Integer> getAssignedNumberScholarships() {
         return distributionOperation.execute(passedStudentsInDirections, Constants.NUMBER_SCHOLARSHIPS);
-    }
-
-    public List<Student> getStudents() {
-        return studentList;
     }
 }
