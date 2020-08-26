@@ -19,10 +19,15 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
-  mvc:
-    throw-exception-if-no-handler-found: true
-  resources:
-    add-mappings: false
+#  freemarker:
+#    request-context-attribute: request
+#    cache: false
+#    template-loader-path: classpath:/templates/
+#    suffix: .ftl
+#  mvc:
+#    throw-exception-if-no-handler-found: true
+#  resources:
+#    add-mappings: false
 
 logging:
   level:

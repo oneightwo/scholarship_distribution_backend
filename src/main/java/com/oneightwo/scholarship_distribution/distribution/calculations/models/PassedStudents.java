@@ -25,7 +25,7 @@ public final class PassedStudents extends AbstractStudentInDistributionAndUniver
     }
 
     private boolean checkIsValidStudent(Student student) {
-        return student.isValid();
+        return student.getIsValid();
     }
 
 }

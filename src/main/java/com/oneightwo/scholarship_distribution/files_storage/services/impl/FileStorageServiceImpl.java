@@ -5,7 +5,7 @@ import com.oneightwo.scholarship_distribution.core.exceptions.CoreException;
 import com.oneightwo.scholarship_distribution.core.exceptions.FileNotFoundException;
 import com.oneightwo.scholarship_distribution.core.exceptions.InvalidFileFormatException;
 import com.oneightwo.scholarship_distribution.files_storage.constants.Constants;
-import com.oneightwo.scholarship_distribution.files_storage.services.FileService;
+import com.oneightwo.scholarship_distribution.files_storage.services.FileStorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -18,9 +18,9 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 
 @Service
-public class FileServiceImpl implements FileService {
+public class FileStorageServiceImpl implements FileStorageService {
 
-    private final Logger log = LoggerFactory.getLogger(FileServiceImpl.class);
+    private final Logger log = LoggerFactory.getLogger(FileStorageServiceImpl.class);
 
     /**
      * получение названия папки семестра

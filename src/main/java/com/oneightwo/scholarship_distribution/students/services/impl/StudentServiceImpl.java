@@ -40,6 +40,7 @@ public class StudentServiceImpl implements StudentService {
     public Student save(Student student) {
         student.setDataRegistration(LocalDateTime.now());
         student.setRating(getRating(student));
+        student.setIsValid(false);
         return studentRepository.save(student);
     }
 
@@ -53,9 +54,9 @@ public class StudentServiceImpl implements StudentService {
     @Transactional
     @Override
     public Student update(Student student) throws CoreException {
-        getById(student.getId());
+        Student dbStudent = getById(student.getId());
+        student.setDataRegistration(dbStudent.getDataRegistration());
         student.setRating(getRating(student));
-        student.setValid(true);
         return studentRepository.save(student);
     }
 

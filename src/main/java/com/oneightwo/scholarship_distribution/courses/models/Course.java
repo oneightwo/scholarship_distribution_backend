@@ -1,5 +1,7 @@
 package com.oneightwo.scholarship_distribution.courses.models;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 public enum Course {
@@ -26,4 +28,8 @@ public enum Course {
         }
         throw new NoSuchElementException("Не существует семестр: " + value);
     }
+
+//    public static List<Course> getByDate(LocalDate date) {
+//        if (date.getMonth())
+//    }
 }

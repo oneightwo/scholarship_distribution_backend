@@ -1,7 +1,7 @@
 package com.oneightwo.scholarship_distribution.students.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.codehaus.jackson.annotate.JsonProperty;
 
 import javax.validation.constraints.NotNull;
 
@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @ToString
 @EqualsAndHashCode
 public class StudentDTO implements Comparable<StudentDTO> {
-    @JsonProperty("student_id")
+
     private Long id;
 
     @NotNull
@@ -23,6 +23,7 @@ public class StudentDTO implements Comparable<StudentDTO> {
 
     private String patronymic;
 
+    @NotNull
     @JsonProperty("university_id")
     private Long universityId;
 
@@ -30,7 +31,8 @@ public class StudentDTO implements Comparable<StudentDTO> {
     private String faculty;
 
     @NotNull
-    private Integer course;
+    @JsonProperty("course_id")
+    private Integer courseId;
 
     @NotNull
     private String email;
@@ -91,16 +93,15 @@ public class StudentDTO implements Comparable<StudentDTO> {
 
     private int rating;
 
-    @NotNull
     @JsonProperty("is_valid")
-    private boolean isValid;
+    private Boolean isValid;
 
     public StudentDTO(@NotNull String surname,
                       @NotNull String name,
                       String patronymic,
                       Long universityId,
                       @NotNull String faculty,
-                      @NotNull Integer course,
+                      @NotNull Integer courseId,
                       @NotNull String email,
                       String phone,
                       @NotNull Long scienceDirectionId,
@@ -120,13 +121,13 @@ public class StudentDTO implements Comparable<StudentDTO> {
                       @NotNull int c13,
                       @NotNull int c14,
                       @NotNull int c15,
-                      @NotNull boolean isValid) {
+                      Boolean isValid) {
         this.surname = surname;
         this.name = name;
         this.patronymic = patronymic;
         this.universityId = universityId;
         this.faculty = faculty;
-        this.course = course;
+        this.courseId = courseId;
         this.email = email;
         this.phone = phone;
         this.scienceDirectionId = scienceDirectionId;

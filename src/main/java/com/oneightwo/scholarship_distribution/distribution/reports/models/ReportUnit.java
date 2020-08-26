@@ -1,7 +1,8 @@
 package com.oneightwo.scholarship_distribution.distribution.reports.models;
 
 import lombok.*;
-import org.jetbrains.annotations.NotNull;
+
+import javax.validation.constraints.NotNull;
 
 @AllArgsConstructor
 @Getter

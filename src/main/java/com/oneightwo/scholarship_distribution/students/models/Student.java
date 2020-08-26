@@ -4,6 +4,7 @@ import com.oneightwo.scholarship_distribution.courses.models.Course;
 import com.oneightwo.scholarship_distribution.science_directions.models.ScienceDirection;
 import com.oneightwo.scholarship_distribution.universities.models.University;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -26,7 +27,7 @@ public class Student {
     private String name;
     private String patronymic;
     @JoinColumn(name = "university_id", nullable = false)
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH})
+    @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.DETACH})
     private University university;
     @Column(nullable = false)
     private String faculty;
@@ -35,44 +36,45 @@ public class Student {
     private String email;
     private String phone;
     @JoinColumn(name = "science_direction_id", nullable = false)
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH})
+    @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.DETACH})
     private ScienceDirection scienceDirection;
-    @Column(nullable = false)
+    @Column(length = 4000, nullable = false)
     private String topic;
     @Column(nullable = false)
-    private int c1;
+    private Integer c1;
     @Column(nullable = false)
-    private int c2;
+    private Integer c2;
     @Column(nullable = false)
-    private int c3;
+    private Integer c3;
     @Column(nullable = false)
-    private int c4;
+    private Integer c4;
     @Column(nullable = false)
-    private int c5;
+    private Integer c5;
     @Column(nullable = false)
-    private int c6;
+    private Integer c6;
     @Column(nullable = false)
-    private int c7;
+    private Integer c7;
     @Column(nullable = false)
-    private int c8;
+    private Integer c8;
     @Column(nullable = false)
-    private int c9;
+    private Integer c9;
     @Column(nullable = false)
-    private int c10;
+    private Integer c10;
     @Column(nullable = false)
-    private int c11;
+    private Integer c11;
     @Column(nullable = false)
-    private int c12;
+    private Integer c12;
     @Column(nullable = false)
-    private int c13;
+    private Integer c13;
     @Column(nullable = false)
-    private int c14;
+    private Integer c14;
     @Column(nullable = false)
-    private int c15;
+    private Integer c15;
     @Column(nullable = false)
     private int rating;
     @Column(name = "data_registration", nullable = false)
     private LocalDateTime dataRegistration;
     @Column(name = "is_valid", nullable = false)
-    private boolean isValid;
+    private Boolean isValid;
+
 }

@@ -2,7 +2,9 @@ package com.oneightwo.scholarship_distribution.distribution.constants;
 
 import com.oneightwo.scholarship_distribution.core.exceptions.SemesterNotFoundException;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public enum Semester {
     AUTUMN(List.of(9, 10, 11, 12)), SPRING(List.of(1, 2, 3, 4, 5, 6, 7, 8));
@@ -24,6 +26,15 @@ public enum Semester {
             }
         }
         return null;
+    }
+
+    public static Semester getSemesterByDate(LocalDate localDate) {
+        for (Semester semester : Semester.values()) {
+            if (semester.getMonths().contains(localDate.getMonthValue())) {
+                return semester;
+            }
+        }
+        throw new NoSuchElementException("Данного месяца не существует");
     }
 
     public static List<Integer> getMonths(String month) throws SemesterNotFoundException {

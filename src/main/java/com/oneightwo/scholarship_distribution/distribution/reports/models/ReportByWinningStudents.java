@@ -1,12 +1,12 @@
 package com.oneightwo.scholarship_distribution.distribution.reports.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.oneightwo.scholarship_distribution.students.models.StudentDTO;
 import com.oneightwo.scholarship_distribution.universities.models.UniversityDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 import java.util.List;
 import java.util.TreeSet;
@@ -29,7 +29,7 @@ public class ReportByWinningStudents {
         BaseStudentInformation baseStudentInformation = new BaseStudentInformation(
                 studentDTO.getName(),
                 studentDTO.getFaculty(),
-                studentDTO.getCourse(),
+                studentDTO.getCourseId(),
                 studentDTO.getTopic(),
                 studentDTO.getRating());
         getStudentsOrDefault(studentDTO.getUniversityId()).getValue().add(baseStudentInformation);

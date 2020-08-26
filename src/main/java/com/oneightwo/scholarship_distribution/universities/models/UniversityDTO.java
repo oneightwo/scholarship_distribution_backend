@@ -1,8 +1,8 @@
 package com.oneightwo.scholarship_distribution.universities.models;
 
 import lombok.*;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.jetbrains.annotations.NotNull;
+
+import javax.validation.constraints.NotNull;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 @EqualsAndHashCode
 public class UniversityDTO implements Comparable<UniversityDTO> {
 
-    @JsonProperty("university_id")
+//    @JsonProperty("university_id")
     private Long id;
     private String name;
     private String abbreviation;

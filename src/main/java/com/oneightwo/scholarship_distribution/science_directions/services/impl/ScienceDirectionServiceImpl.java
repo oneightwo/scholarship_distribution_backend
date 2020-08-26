@@ -29,10 +29,10 @@ public class ScienceDirectionServiceImpl implements ScienceDirectionService {
         return scienceDirectionRepository.findAll();
     }
 
-    @Override
-    public List<ScienceDirection> getExisting() {
-        return scienceDirectionRepository.getExisting();
-    }
+//    @Override
+//    public List<ScienceDirection> getExisting() {
+//        return scienceDirectionRepository.getExisting();
+//    }
 
     @Transactional
     @Override
@@ -60,5 +60,10 @@ public class ScienceDirectionServiceImpl implements ScienceDirectionService {
     public void deleteById(Long id) throws CoreException {
         getById(id);
         scienceDirectionRepository.deleteById(id);
+    }
+
+    @Override
+    public List<ScienceDirection> getCurrent() {
+        return scienceDirectionRepository.getExisting();
     }
 }

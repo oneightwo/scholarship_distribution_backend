@@ -11,8 +11,6 @@ public interface ScienceDirectionService {
 
     ScienceDirection save(ScienceDirection scienceDirection);
 
-    List<ScienceDirection> getExisting();
-
     List<ScienceDirection> getExistingAndDeleted();
 
     ScienceDirection update(ScienceDirection scienceDirection) throws CoreException;
@@ -20,4 +18,6 @@ public interface ScienceDirectionService {
     void markDeleteById(Long id) throws CoreException;
 
     void deleteById(Long id) throws CoreException;
+
+    List<ScienceDirection> getCurrent();
 }

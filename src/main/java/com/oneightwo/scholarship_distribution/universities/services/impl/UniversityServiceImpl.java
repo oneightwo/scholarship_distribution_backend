@@ -55,4 +55,9 @@ public class UniversityServiceImpl implements UniversityService {
         getById(id);
         universityRepository.deleteById(id);
     }
+
+    @Override
+    public List<University> getCurrent() {
+        return universityRepository.getExisting();
+    }
 }

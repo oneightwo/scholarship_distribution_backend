@@ -39,8 +39,8 @@ public class ReportByUniversitiesServiceImpl implements ReportByUniversitiesServ
                 directionsAndUniversitiesReportService.getExcludedApplicationsSubmittedToUniversities(),
                 directionsAndUniversitiesReportService.getDataDistributionByUniversitiesAndDirections(),
                 directionsAndUniversitiesReportService.getDataDistributionByUniversitiesInDirections(),
-                new TreeSet<>(TransformationHelper.scienceDirectionsToDtos(scienceDirectionService.getExisting())),
-                new TreeSet<>(TransformationHelper.universitiesToDtos(universityService.getExisting()))
+                new TreeSet<>(TransformationHelper.scienceDirectionsToDtos(scienceDirectionService.getCurrent())),
+                new TreeSet<>(TransformationHelper.universitiesToDtos(universityService.getCurrent()))
         );
     }
 }

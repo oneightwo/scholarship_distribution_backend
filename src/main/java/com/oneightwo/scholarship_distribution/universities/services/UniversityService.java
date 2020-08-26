@@ -20,4 +20,6 @@ public interface UniversityService {
     void markDeleteById(Long id) throws CoreException;
 
     void deleteById(Long id) throws CoreException;
+
+    List<University> getCurrent();
 }

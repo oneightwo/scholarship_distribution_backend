@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 
-public interface FileService {
+public interface FileStorageService {
 
     /**
      * загрузка файла

@@ -1,6 +1,7 @@
 package com.oneightwo.scholarship_distribution.core.helpers;
 
 import com.oneightwo.scholarship_distribution.courses.models.Course;
+import com.oneightwo.scholarship_distribution.courses.models.CourseDTO;
 import com.oneightwo.scholarship_distribution.science_directions.models.ScienceDirection;
 import com.oneightwo.scholarship_distribution.science_directions.models.ScienceDirectionDTO;
 import com.oneightwo.scholarship_distribution.students.models.Student;
@@ -50,7 +51,7 @@ final public class TransformationHelper {
                 student.getC14(),
                 student.getC15(),
                 student.getRating(),
-                student.isValid()
+                student.getIsValid()
         );
     }
 
@@ -64,7 +65,7 @@ final public class TransformationHelper {
         university.setId(studentDTO.getUniversityId());
         student.setUniversity(university);
         student.setFaculty(studentDTO.getFaculty());
-        student.setCourse(Course.getByValue(studentDTO.getCourse()));
+        student.setCourse(Course.getByValue(studentDTO.getCourseId()));
         student.setEmail(studentDTO.getEmail());
         student.setPhone(studentDTO.getPhone());
         var sd = new ScienceDirection();
@@ -87,7 +88,7 @@ final public class TransformationHelper {
         student.setC14(studentDTO.getC14());
         student.setC15(studentDTO.getC15());
         student.setRating(studentDTO.getRating());
-        student.setValid(studentDTO.isValid());
+        student.setIsValid(studentDTO.getIsValid());
         return student;
     }
 
@@ -134,6 +135,19 @@ final public class TransformationHelper {
                 university.getName(),
                 university.getAbbreviation(),
                 university.isDeleted()
+        );
+    }
+
+    public static List<CourseDTO> coursesToDtos(List<Course> courses) {
+        List<CourseDTO> courseDTOs = new ArrayList<>();
+        courses.forEach(course -> courseDTOs.add(objectToDto(course)));
+        return courseDTOs;
+    }
+
+    public static CourseDTO objectToDto(Course course) {
+        return new CourseDTO(
+                (long) course.getValue(),
+                course.getValue()
         );
     }
 }

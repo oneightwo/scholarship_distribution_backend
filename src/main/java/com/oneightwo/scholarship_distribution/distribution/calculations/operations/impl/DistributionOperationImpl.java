@@ -46,11 +46,11 @@ public class DistributionOperationImpl implements DistributionOperation {
     }
 
     private void distributionOfSmallerPartOfQuotaIfFreeGreaterThanZero() {
-        increaseResult(getKeyOfHighestRating(), 1);
+        changeResult(getKeyOfHighestRating(), 1);
     }
 
     private void distributionOfSmallerPartOfQuotaIfFreeLessThanZero() {
-        increaseResult(getKeyOfSmallerRating(), -1);
+        changeResult(getKeyOfSmallerRating(), -1);
     }
 
     private Long getKeyOfHighestRating() {
@@ -86,11 +86,11 @@ public class DistributionOperationImpl implements DistributionOperation {
         for (Map.Entry<Long, Double> entry : distributionUnit.getRelationshipRatings().entrySet()) {
             Long key = entry.getKey();
             Double rating = entry.getValue();
-            increaseResult(key, (int) Math.round(rating * quota));
+            changeResult(key, (int) Math.round(rating * quota));
         }
     }
 
-    private void increaseResult(Long key, int quantity) {
+    private void changeResult(Long key, int quantity) {
         quota -= quantity;
         result.merge(key, quantity, Integer::sum);
     }
@@ -105,7 +105,7 @@ public class DistributionOperationImpl implements DistributionOperation {
             var numberOfPlace = distributionUnit.getStudentsOrDefaultById(key).size();
             if (numberOfPlace != 0 && assignedAmount > numberOfPlace) {
                 var difference = numberOfPlace - assignedAmount;
-                increaseResult(key, difference);
+                changeResult(key, difference);
             }
         });
     }
