@@ -18,6 +18,10 @@ public class FormData {
 
     private StudentDTO student;
 
+    private TreeSet<UniversityDTO> universities = new TreeSet<>();
 
+    private TreeSet<CourseDTO> courses = new TreeSet<>();
+
+    private TreeSet<ScienceDirectionDTO> scienceDirections = new TreeSet<>();
 
 }
