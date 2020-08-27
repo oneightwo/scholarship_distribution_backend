@@ -1,10 +1,9 @@
 package com.oneightwo.scholarship_distribution.data_view.services;
 
-import com.oneightwo.scholarship_distribution.data_view.models.FormData;
+import com.oneightwo.scholarship_distribution.data_view.models.StudentData;
 
-public interface DataService {
+public interface DataService<T, I> {
 
-    FormData execute();
+    T execute(I i);
 
-    FormData execute(Long studentId);
 }

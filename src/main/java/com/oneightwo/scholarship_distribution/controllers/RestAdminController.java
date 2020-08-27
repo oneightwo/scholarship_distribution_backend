@@ -2,16 +2,11 @@ package com.oneightwo.scholarship_distribution.controllers;
 
 import com.oneightwo.scholarship_distribution.core.exceptions.CoreException;
 import com.oneightwo.scholarship_distribution.core.helpers.TransformationHelper;
-import com.oneightwo.scholarship_distribution.data_view.models.FormData;
 import com.oneightwo.scholarship_distribution.data_view.services.DataService;
 import com.oneightwo.scholarship_distribution.students.models.Student;
 import com.oneightwo.scholarship_distribution.students.models.StudentDTO;
 import com.oneightwo.scholarship_distribution.students.services.StudentService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.SortDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,16 +25,21 @@ public class RestAdminController {
         this.dataService = dataService;
     }
 
-    @GetMapping("/students/{id}")
-    public ResponseEntity<?> getStudentById(@PathVariable Long id) {
-        return ResponseEntity.ok(dataService.execute(id));
+    @GetMapping("/test")
+    public ResponseEntity<?> test() {
+        return ResponseEntity.ok(dataService.execute());
     }
 
-    @GetMapping("/students")
-    public ResponseEntity<?> getParticipants(@PageableDefault(size = Integer.MAX_VALUE)
-                                             @SortDefault(sort = "surname", direction = Sort.Direction.ASC) Pageable pageable) {
-        return ResponseEntity.ok(dataService.execute(id));
-    }
+//    @GetMapping("/students/{id}")
+//    public ResponseEntity<?> getStudentById(@PathVariable Long id) {
+//        return ResponseEntity.ok(dataService.execute(id));
+//    }
+
+//    @GetMapping("/students")
+//    public ResponseEntity<?> getParticipants(@PageableDefault(size = Integer.MAX_VALUE)
+//                                             @SortDefault(sort = "surname", direction = Sort.Direction.ASC) Pageable pageable) {
+//        return ResponseEntity.ok(dataService.execute(id));
+//    }
 
     @DeleteMapping("/students/{id}")
     public ResponseEntity<?> deleteStudent(@PathVariable Long id) throws CoreException {

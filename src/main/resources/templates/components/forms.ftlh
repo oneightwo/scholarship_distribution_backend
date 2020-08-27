@@ -120,7 +120,7 @@
                     </div>
                     <div class="col-4">
                         <label for="name">Имя</label>
-                        <input id="name" type="text" class="form-control" value="${(formData.student.name)!}" required>
+                        <input id="name" type="text" class="form-control" value="${(studentData.student.name)!}" required>
                         <div class="invalid-tooltip">
                             Заполните поле
                         </div>
@@ -128,14 +128,14 @@
                     <div class="col-4">
                         <label for="patronymic">Отчество</label>
                         <input id="patronymic" type="text" class="form-control"
-                               value="${(formData.student.patronymic)!}">
+                               value="${(studentData.student.patronymic)!}">
                     </div>
                 </div>
                 <div class="form-row mb-3">
                     <div class="col-6">
                         <label for="university_id">Университет</label>
                         <select id="university_id" class="custom-select" required>
-                            <#list formData.universities as university>
+                            <#list studentData.universities as university>
                                 <option value="${university.id}">${university.name}</option>
                             </#list>
                         </select>
@@ -146,7 +146,7 @@
                     <div class="col-2">
                         <label for="course_id">Курс</label>
                         <select id="course_id" class="custom-select" required>
-                            <#list formData.courses as course>
+                            <#list studentData.courses as course>
                                 <option value="${course.id}">${course.value}</option>
                             </#list>
                         </select>
@@ -156,7 +156,7 @@
                     </div>
                     <div class="col-4">
                         <label for="faculty">Факультет</label>
-                        <input type="text" class="form-control" id="faculty" value="${(formData.student.faculty)!}"
+                        <input type="text" class="form-control" id="faculty" value="${(studentData.student.faculty)!}"
                                required>
                         <div class="invalid-tooltip">
                             Заполните поле
@@ -166,7 +166,7 @@
                 <div class="form-row mb-3">
                     <div class="col-6">
                         <label for="email">Email</label>
-                        <input type="text" class="form-control" id="email" value="${(formData.student.email)!}"
+                        <input type="text" class="form-control" id="email" value="${(studentData.student.email)!}"
                                required>
                         <div class="invalid-tooltip">
                             Заполните поле
@@ -174,7 +174,7 @@
                     </div>
                     <div class="col-6">
                         <label for="phone">Номер телефона</label>
-                        <input id="phone" type="text" class="form-control" value="${(formData.student.phone)!}">
+                        <input id="phone" type="text" class="form-control" value="${(studentData.student.phone)!}">
                     </div>
                 </div>
                 <div class="form-row mb-3">
@@ -182,7 +182,7 @@
                         <label for="science_direction_id">Направление</label>
                         <select id="science_direction_id" class="custom-select" required>
                             <#--                        <option hidden disabled selected value></option>-->
-                            <#list formData.scienceDirections as scienceDirection>
+                            <#list studentData.scienceDirections as scienceDirection>
                                 <option value="${scienceDirection.id}">${scienceDirection.name}</option>
                             </#list>
                         </select>
@@ -192,7 +192,7 @@
                     </div>
                     <div class="col-8">
                         <label for="topic">Тема</label>
-                        <input type="text" class="form-control" id="topic" value="${(formData.student.topic)!}"
+                        <input type="text" class="form-control" id="topic" value="${(studentData.student.topic)!}"
                                required>
                         <div class="invalid-tooltip">
                             Заполните поле
@@ -203,35 +203,35 @@
                     <div class="col-9">
                         <label>Критерии</label>
                         <div class="input-group">
-                            <input type="text" class="form-control" id="c1" value="${(formData.student.c1)!}" required
+                            <input type="text" class="form-control" id="c1" value="${(studentData.student.c1)!}" required
                                    onchange="changeCriteriaHandler(this)">
-                            <input type="text" class="form-control" id="c2" value="${(formData.student.c2)!}" required
+                            <input type="text" class="form-control" id="c2" value="${(studentData.student.c2)!}" required
                                    onchange="changeCriteriaHandler(this)">
-                            <input type="text" class="form-control" id="c3" value="${(formData.student.c3)!}" required
+                            <input type="text" class="form-control" id="c3" value="${(studentData.student.c3)!}" required
                                    onchange="changeCriteriaHandler(this)">
-                            <input type="text" class="form-control" id="c4" value="${(formData.student.c4)!}" required
+                            <input type="text" class="form-control" id="c4" value="${(studentData.student.c4)!}" required
                                    onchange="changeCriteriaHandler(this)">
-                            <input type="text" class="form-control" id="c5" value="${(formData.student.c5)!}" required
+                            <input type="text" class="form-control" id="c5" value="${(studentData.student.c5)!}" required
                                    onchange="changeCriteriaHandler(this)">
-                            <input type="text" class="form-control" id="c6" value="${(formData.student.c6)!}" required
+                            <input type="text" class="form-control" id="c6" value="${(studentData.student.c6)!}" required
                                    onchange="changeCriteriaHandler(this)">
-                            <input type="text" class="form-control" id="c7" value="${(formData.student.c7)!}" required
+                            <input type="text" class="form-control" id="c7" value="${(studentData.student.c7)!}" required
                                    onchange="changeCriteriaHandler(this)">
-                            <input type="text" class="form-control" id="c8" value="${(formData.student.c8)!}" required
+                            <input type="text" class="form-control" id="c8" value="${(studentData.student.c8)!}" required
                                    onchange="changeCriteriaHandler(this)">
-                            <input type="text" class="form-control" id="c9" value="${(formData.student.c9)!}" required
+                            <input type="text" class="form-control" id="c9" value="${(studentData.student.c9)!}" required
                                    onchange="changeCriteriaHandler(this)">
-                            <input type="text" class="form-control" id="c10" value="${(formData.student.c10)!}" required
+                            <input type="text" class="form-control" id="c10" value="${(studentData.student.c10)!}" required
                                    onchange="changeCriteriaHandler(this)">
-                            <input type="text" class="form-control" id="c11" value="${(formData.student.c11)!}" required
+                            <input type="text" class="form-control" id="c11" value="${(studentData.student.c11)!}" required
                                    onchange="changeCriteriaHandler(this)">
-                            <input type="text" class="form-control" id="c12" value="${(formData.student.c12)!}" required
+                            <input type="text" class="form-control" id="c12" value="${(studentData.student.c12)!}" required
                                    onchange="changeCriteriaHandler(this)">
-                            <input type="text" class="form-control" id="c13" value="${(formData.student.c13)!}" required
+                            <input type="text" class="form-control" id="c13" value="${(studentData.student.c13)!}" required
                                    onchange="changeCriteriaHandler(this)">
-                            <input type="text" class="form-control" id="c14" value="${(formData.student.c14)!}" required
+                            <input type="text" class="form-control" id="c14" value="${(studentData.student.c14)!}" required
                                    onchange="changeCriteriaHandler(this)">
-                            <input type="text" class="form-control" id="c15" value="${(formData.student.c15)!}" required
+                            <input type="text" class="form-control" id="c15" value="${(studentData.student.c15)!}" required
                                    onchange="changeCriteriaHandler(this)">
                         </div>
                     </div>
