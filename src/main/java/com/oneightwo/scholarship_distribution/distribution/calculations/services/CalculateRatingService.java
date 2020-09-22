@@ -2,7 +2,7 @@ package com.oneightwo.scholarship_distribution.distribution.calculations.service
 
 import org.springframework.stereotype.Service;
 
-import static com.oneightwo.scholarship_distribution.distribution.constants.Constants.*;
+import static com.oneightwo.scholarship_distribution.data_view.constants.Constants.*;
 
 @Service
 public class CalculateRatingService {

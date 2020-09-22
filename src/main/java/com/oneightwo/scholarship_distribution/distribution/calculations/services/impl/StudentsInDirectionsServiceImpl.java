@@ -3,7 +3,7 @@ package com.oneightwo.scholarship_distribution.distribution.calculations.service
 import com.oneightwo.scholarship_distribution.distribution.calculations.operations.DistributionOperation;
 import com.oneightwo.scholarship_distribution.distribution.calculations.models.DistributionUnit;
 import com.oneightwo.scholarship_distribution.distribution.calculations.services.StudentsInDirectionsService;
-import com.oneightwo.scholarship_distribution.distribution.constants.Constants;
+import com.oneightwo.scholarship_distribution.data_view.constants.Constants;
 import com.oneightwo.scholarship_distribution.students.models.Student;
 import org.springframework.stereotype.Service;
 

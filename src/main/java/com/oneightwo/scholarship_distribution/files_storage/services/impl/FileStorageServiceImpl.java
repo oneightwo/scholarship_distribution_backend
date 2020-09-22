@@ -1,6 +1,6 @@
 package com.oneightwo.scholarship_distribution.files_storage.services.impl;
 
-import com.oneightwo.scholarship_distribution.distribution.constants.Semester;
+import com.oneightwo.scholarship_distribution.data_view.constants.Semester;
 import com.oneightwo.scholarship_distribution.core.exceptions.CoreException;
 import com.oneightwo.scholarship_distribution.core.exceptions.FileNotFoundException;
 import com.oneightwo.scholarship_distribution.core.exceptions.InvalidFileFormatException;

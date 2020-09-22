@@ -2,7 +2,7 @@ package com.oneightwo.scholarship_distribution.courses.services.impl;
 
 import com.oneightwo.scholarship_distribution.courses.models.Course;
 import com.oneightwo.scholarship_distribution.courses.services.CourseService;
-import com.oneightwo.scholarship_distribution.distribution.constants.Semester;
+import com.oneightwo.scholarship_distribution.data_view.constants.Semester;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

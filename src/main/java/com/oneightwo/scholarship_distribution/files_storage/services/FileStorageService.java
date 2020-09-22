@@ -1,6 +1,6 @@
 package com.oneightwo.scholarship_distribution.files_storage.services;
 
-import com.oneightwo.scholarship_distribution.distribution.constants.Semester;
+import com.oneightwo.scholarship_distribution.data_view.constants.Semester;
 import com.oneightwo.scholarship_distribution.core.exceptions.CoreException;
 import org.springframework.web.multipart.MultipartFile;
 

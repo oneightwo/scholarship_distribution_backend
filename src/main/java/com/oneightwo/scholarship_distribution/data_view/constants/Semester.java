@@ -1,4 +1,4 @@
-package com.oneightwo.scholarship_distribution.distribution.constants;
+package com.oneightwo.scholarship_distribution.data_view.constants;
 
 import com.oneightwo.scholarship_distribution.core.exceptions.SemesterNotFoundException;
 

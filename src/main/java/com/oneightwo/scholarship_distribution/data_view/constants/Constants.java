@@ -1,4 +1,4 @@
-package com.oneightwo.scholarship_distribution.distribution.constants;
+package com.oneightwo.scholarship_distribution.data_view.constants;
 
 public interface Constants {
     Integer[] VK = new Integer[]{3, 1, 2, 3, 1, 2, 3, 3, 2, 2, 2, 1, 1, 2, 1};

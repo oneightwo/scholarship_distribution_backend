@@ -3,8 +3,7 @@ package com.oneightwo.scholarship_distribution;
 import com.oneightwo.scholarship_distribution.core.helpers.TransformationHelper;
 import com.oneightwo.scholarship_distribution.distribution.calculations.services.impl.StudentsInDirectionsServiceImpl;
 import com.oneightwo.scholarship_distribution.distribution.calculations.services.impl.StudentsInDirectionsAndUniversitiesServiceImpl;
-import com.oneightwo.scholarship_distribution.distribution.constants.Semester;
-import com.oneightwo.scholarship_distribution.distribution.reports.models.ReportByUniversities;
+import com.oneightwo.scholarship_distribution.data_view.constants.Semester;
 import com.oneightwo.scholarship_distribution.distribution.reports.services.ReportByScienceDirectionsService;
 import com.oneightwo.scholarship_distribution.distribution.reports.services.ReportByUniversitiesService;
 import com.oneightwo.scholarship_distribution.distribution.reports.services.base.ScholarshipDistributionByDirectionsAndUniversitiesReportService;
@@ -64,8 +63,6 @@ public class ScholarshipDistributionApplicationTests {
     }
 
     public void test1() {
-//        studentsInDirections.setStudents(studentService.getAll());
-//        System.out.println(studentsInDirections.getAssignedNumberScholarships());
         scholarshipDistributionByDirectionsReportService.setStudents(studentService.getAll());
         System.out.println("1 " + scholarshipDistributionByDirectionsReportService.getAssignedNumberScholarships());
         System.out.println("2 " + scholarshipDistributionByDirectionsReportService.getAverageRatings());
@@ -85,7 +82,6 @@ public class ScholarshipDistributionApplicationTests {
     }
 
     public void generateTestData(int quantity) {
-
         for (int i = 0; i < quantity; i++) {
             studentService.save(TransformationHelper.dtoToObject(new StudentDTO(
                     generateWord(),

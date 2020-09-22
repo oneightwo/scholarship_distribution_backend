@@ -1,7 +1,7 @@
 package com.oneightwo.scholarship_distribution.distribution.reports.services.impl;
 
 import com.oneightwo.scholarship_distribution.core.helpers.TransformationHelper;
-import com.oneightwo.scholarship_distribution.distribution.constants.Semester;
+import com.oneightwo.scholarship_distribution.data_view.constants.Semester;
 import com.oneightwo.scholarship_distribution.distribution.reports.models.ReportByUniversities;
 import com.oneightwo.scholarship_distribution.distribution.reports.services.ReportByUniversitiesService;
 import com.oneightwo.scholarship_distribution.distribution.reports.services.base.ScholarshipDistributionByDirectionsAndUniversitiesReportService;

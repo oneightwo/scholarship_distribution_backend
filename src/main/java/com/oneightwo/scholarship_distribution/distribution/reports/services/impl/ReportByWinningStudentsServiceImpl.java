@@ -2,7 +2,7 @@ package com.oneightwo.scholarship_distribution.distribution.reports.services.imp
 
 import com.oneightwo.scholarship_distribution.core.helpers.TransformationHelper;
 import com.oneightwo.scholarship_distribution.distribution.calculations.services.StudentsInDirectionsAndUniversitiesService;
-import com.oneightwo.scholarship_distribution.distribution.constants.Semester;
+import com.oneightwo.scholarship_distribution.data_view.constants.Semester;
 import com.oneightwo.scholarship_distribution.distribution.reports.models.ReportByWinningStudents;
 import com.oneightwo.scholarship_distribution.distribution.reports.services.ReportByWinningStudentsService;
 import com.oneightwo.scholarship_distribution.students.models.Student;
