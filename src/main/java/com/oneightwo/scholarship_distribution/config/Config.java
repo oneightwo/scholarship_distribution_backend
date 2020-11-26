@@ -2,7 +2,7 @@ package com.oneightwo.scholarship_distribution.config;
 
 public class Config {
 
-//    @Bean
+//    @Beane
 //    public DataSource dataSource() {
 //        DriverManagerDataSource dataSource = new DriverManagerDataSource();
 //        dataSource.setDriverClassName("org.postgresql.Driver");
