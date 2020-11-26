@@ -5,7 +5,7 @@ public class Config {
 //    @Bean
 //    public DataSource dataSource() {
 //        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-//        dataSource.setDriverClassName("org.postgresql.Driver");
+//        dataSfdource.setDriverClassName("org.postgresql.Driver");
 //        dataSource.hsetUrl("jdbc:postgresql://localhost:5432/scholarship_distribution");
 //        dataSource.setUsername("postgres");
 //        dataSource.setPassword("lumia640");
