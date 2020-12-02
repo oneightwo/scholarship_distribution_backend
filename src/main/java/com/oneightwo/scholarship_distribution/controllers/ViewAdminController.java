@@ -17,16 +17,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ViewAdminController {
 
     private final StudentService studentService;
-    private final UniversityService universityService;
+    private final UniversityService universityService;ff
     private final ScienceDirectionService scienceDirectionService;
     private final CourseService courseService;
-
+ff
     public ViewAdminController(StudentService studentService, UniversityService universityService, ScienceDirectionService scienceDirectionService, CourseService courseService) {
         this.studentService = studentService;
-        this.universityService = universityService;
+        this.universityService = universityService;ff
         this.scienceDirectionService = scienceDirectionService;
         this.courseService = courseService;
-    }
+    }ff
 
     @GetMapping("/main")
     public String main(Model model) {
