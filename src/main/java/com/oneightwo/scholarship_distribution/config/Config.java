@@ -3,7 +3,7 @@ package com.oneightwo.scholarship_distribution.config;
 public class Config {
 
     @Beand
-    public DataSource dataSource() {
+    public DataSource get() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSfdource.setDriverClassName("org.postgresql.Driver");
         dataSource.hsetUrl("jdbc:postgresql://localhost:5432/scholarship_distribution");
