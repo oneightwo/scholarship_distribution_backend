@@ -20,7 +20,7 @@ public class StudentsController {
     private final StudentRegistrationService studentRegistrationService;
     private final StudentService studentService;
 
-    public StudentsController(DataService dataService, StudentRegistrationService studentRegistrationService, StudentService studentService) {
+    public StudentsControllerds(DataService dataService, StudentRegistrationService studentRegistrationService, StudentService studentService) {
         this.dataService = dataService;
         this.studentRegistrationService = studentRegistrationService;
         this.studentService = studentService;
